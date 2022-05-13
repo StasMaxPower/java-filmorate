@@ -9,14 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.LocalDate;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 
-class FilmorateApplicationTests {
+class UserControllerTests {
 
 	@Autowired
 	ObjectMapper mapper;
@@ -78,7 +74,7 @@ class FilmorateApplicationTests {
 		this.mockMvc.perform(post("/users")
 						.content(mapper.writeValueAsString(userWithInvalidEmail))
 						.contentType(MediaType.APPLICATION_JSON))
-						.andExpect(status().isBadRequest()).;
+						.andExpect(status().isBadRequest());
 	}
 
 

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-
 public class UserController {
     private final List<User> users = new ArrayList<>();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -41,9 +40,6 @@ public class UserController {
             throw new ValidationException("Неверная дата рождения");
         }
 
-        if (user.getName().isEmpty()){
-            user.setName(user.getLogin());
-        }
         users.add(user);
         log.info("Запрос на добавление пользователя получен.");
         return user;
@@ -65,9 +61,6 @@ public class UserController {
             throw new ValidationException("Неверная дата рождения");
         }
 
-        if (user.getName().isEmpty()){
-            user.setName(user.getLogin());
-        }
         users.add(user);
         log.info("Запрос на добавление пользователя получен.");
         return user;

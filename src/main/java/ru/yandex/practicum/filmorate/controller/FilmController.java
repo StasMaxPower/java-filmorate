@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@Data
 public class FilmController {
     private final List<Film> films = new ArrayList<>();
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
@@ -33,7 +32,7 @@ public class FilmController {
             log.info("Название фильма не задано");
             throw new ValidationException("Название фильма не задано");
         }
-        if (film.getDescription().length()>199||film.getDescription().isBlank()) {
+        if (film.getDescription().length()>200||film.getDescription().isBlank()) {
             log.info("Описание фильма не более 200 символов.");
             throw new ValidationException("Описание фильма не более 200 символов");
         }
