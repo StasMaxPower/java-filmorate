@@ -8,10 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.User;
-
 import java.time.LocalDate;
-
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -76,29 +73,4 @@ class UserControllerTests {
 						.contentType(MediaType.APPLICATION_JSON))
 						.andExpect(status().isBadRequest());
 	}
-
-
-/*
-
-	private String createHttpClient() {
-		 HttpClient client = HttpClient.newHttpClient();
-		HttpResponse<String> response = null;
-		try {
-			URI url = URI.create("http://localhost:8080" + "/register");
-			HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			if (response.statusCode() == 200) {
-				System.out.println("Код " + response.statusCode() + " Вы успешно зарегистрировались");
-			}
-			if (response.statusCode() == 400) {
-				System.out.println("Ошибка");
-			}
-		} catch (IOException | InterruptedException e) { // обрабатываем ошибки отправки запроса
-			System.out.println("Во время выполнения запроса возникла ошибка.\n" +
-					"Проверьте, пожалуйста, адрес и повторите попытку.");
-		}
-		return response.body();
-	}
-*/
-
 }

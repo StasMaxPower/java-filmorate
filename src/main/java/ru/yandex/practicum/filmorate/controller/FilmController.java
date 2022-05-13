@@ -10,23 +10,22 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class FilmController {
-    private final List<Film> films = new ArrayList<>();
+    private final Map<Integer, Film> films = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
 
 
     @GetMapping("/films")
-    public List<Film> getFilms(){
+    public Collection<Film> getFilms(){
         log.info("Запрос на вывод фильмов получен.");
-        return films;
+        return films.values();
     }
 
-    @PostMapping(value = "/films")
+    @PutMapping("/films")
     public Film addFilm(@Valid @RequestBody Film film){
         if (film.getName().isEmpty()||film.getName().isBlank()) {
             log.info("Название фильма не задано");
@@ -44,12 +43,16 @@ public class FilmController {
             log.info("Продолжительность фильма не может быть отрицательной");
             throw new ValidationException("Продолжительность фильма не может быть отрицательной");
         }
-        films.add(film);
+        if (films.containsKey(film.getId())){
+            log.info("Такой фильм уже существует");
+            throw new ValidationException("Такой фильм уже существует");
+        }
+        films.put(film.getId(),film);
         log.info("Запрос на добавление фильма получен.");
         return film;
     }
 
-    @PutMapping("/films")
+    @PostMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film film){
         if (film.getName().isEmpty()||film.getName().isBlank()) {
             log.info("Название фильма не задано");
@@ -67,8 +70,8 @@ public class FilmController {
             log.info("Продолжительность фильма не может быть отрицательной");
             throw new ValidationException("Продолжительность фильма не может быть отрицательной");
         }
-        films.add(film);
-        log.info("Запрос на добавление фильма получен.");
+        films.put(film.getId(),film);
+        log.info("Запрос на обновление фильма получен.");
         return film;
     }
 

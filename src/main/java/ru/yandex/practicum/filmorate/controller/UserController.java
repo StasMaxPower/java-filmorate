@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -9,22 +8,21 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class UserController {
-    private final List<User> users = new ArrayList<>();
+    private final Map<String,User> users = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
 
     @GetMapping("/users")
-    public List<User> getUsers(){
+    public Collection<User> getUsers(){
         log.info("Запрос на вывод пользователей получен.");
-        return users;
+        return users.values();
     }
 
-    @PostMapping(value = "/users")
+    @PutMapping("/users")
     public User addUser(@Valid @RequestBody User user){
 
         if (user.getLogin().isBlank()) {
@@ -39,13 +37,16 @@ public class UserController {
             log.info("Неверная дата рождения");
             throw new ValidationException("Неверная дата рождения");
         }
-
-        users.add(user);
+        if (users.containsKey(user.getEmail())){
+            log.info("Такой пользователь уже существует");
+            throw new ValidationException("Такой пользователь уже существует");
+        }
+        users.put(user.getEmail(),user);
         log.info("Запрос на добавление пользователя получен.");
         return user;
     }
 
-    @PutMapping("/users")
+    @PostMapping(value = "/users")
     public User updateUser(@Valid @RequestBody User user){
 
         if (user.getLogin().isBlank()) {
@@ -61,8 +62,8 @@ public class UserController {
             throw new ValidationException("Неверная дата рождения");
         }
 
-        users.add(user);
-        log.info("Запрос на добавление пользователя получен.");
+        users.put(user.getEmail(),user);
+        log.info("Запрос на обновление пользователя получен.");
         return user;
     }
 
