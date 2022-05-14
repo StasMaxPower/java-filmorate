@@ -7,8 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
-
-
 @Data
 public class User {
     private final int id;
@@ -19,7 +17,6 @@ public class User {
     private String name;
     @Past
     private final LocalDate birthday;
-
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;

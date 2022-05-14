@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,7 +35,7 @@ class UserControllerTests {
 
 	@Test
 	void createValidUserResponseShouldBeOk() throws Exception {
-		this.mockMvc.perform(post("/users")
+		this.mockMvc.perform(put("/users")
 						.content(mapper.writeValueAsString(user))
 						.contentType(MediaType.APPLICATION_JSON))
 						.andExpect(status().isOk());
@@ -42,7 +43,7 @@ class UserControllerTests {
 
 	@Test
 	void createValidUserWithoutNameShouldBeNameAsLogin() throws Exception {
-		this.mockMvc.perform(post("/users")
+		this.mockMvc.perform(put("/users")
 						.content(mapper.writeValueAsString(userWithoutName))
 						.contentType(MediaType.APPLICATION_JSON))
 						.andExpect(status().isOk())
