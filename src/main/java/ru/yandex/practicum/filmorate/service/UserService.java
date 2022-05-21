@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storafe.user.UserStorage.UserStorage;
 
@@ -58,6 +59,7 @@ public class UserService {
     }
 
     public User addUserToFriend(int id, int friendId){
+        getUserToId(friendId).getFriends().add(id);;
         log.info("Запрос на добавление в друзья получен.");
         getUserToId(id).getFriends().add(friendId);
         return getUserToId(id);
@@ -68,7 +70,7 @@ public class UserService {
         return userStorage.getUsers().stream()
                 .filter(x->x.getId() == id)
                 .findFirst()
-                .orElseThrow(()->new ValidationException("Нет такого юзера"));
+                .orElseThrow(()->new NotFoundException("Нет такого юзера"));
     }
 
     public Collection<User> getUsers(){

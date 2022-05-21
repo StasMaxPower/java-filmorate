@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage.FilmStorage;
 
@@ -28,12 +29,13 @@ public class FilmService {
     public List<Film> getPopularFilms(int count){
         log.info("Запрос на вывод популярных фильмов получен.");
         return getFilms().stream()
-                .sorted((p1,p2) -> p1.getLikes().size()-p2.getLikes().size())
+                .sorted((p1,p2) -> p2.getLikes().size()-p1.getLikes().size())
                 .limit(count)
                 .collect(Collectors.toList());
     }
 
     public Film deleteLike(int id, int userId){
+        getFilmToId(userId);
         log.info("Запрос на удаление лайка получен.");
         getFilmToId(id).getLikes().remove(userId);
         return getFilmToId(id);
@@ -50,7 +52,7 @@ public class FilmService {
         return filmStorage.getFilms().stream()
                 .filter(x->x.getId()==id)
                 .findFirst()
-                .orElseThrow(()->new ValidationException(""));
+                .orElseThrow(()->new NotFoundException("Фильм не найден"));
     }
 
     public Collection<Film> getFilms(){

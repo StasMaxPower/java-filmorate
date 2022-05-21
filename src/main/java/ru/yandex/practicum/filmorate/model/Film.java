@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -10,7 +11,7 @@ import java.util.Set;
 
 @Data
 public class Film {
-    private final int id;
+    private int id;
     @NotBlank
     private final String name;
     @Size(min = 0, max = 200)

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private int filmId = 0;
 
     @Override
     public Collection<Film> getFilms(){
@@ -29,12 +31,17 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.info("Такой фильм уже существует");
             throw new ValidationException("Такой фильм уже существует");
         }
+        film.setId(++filmId);
         films.put(film.getId(),film);
         return film;
     }
 
     @Override
     public Film updateFilm(Film film){
+        if (!films.containsKey(film.getId())){
+            log.info("Обновление фильм невозможно - фильм не найден");
+            throw new NotFoundException("Обновление фильм невозможно - фильм не найден");
+        }
         checkFilm(film);
         films.put(film.getId(),film);
         return film;
