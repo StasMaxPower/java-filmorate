@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private UserStorage userStorage;
+    private final UserStorage userStorage;
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
@@ -44,7 +44,7 @@ public class UserService {
         Set<Integer> friends = getUserToId(id).getFriends();
         ArrayList<User> users = new ArrayList<>();
         if (friends == null)
-            throw new ValidationException("Друзей нет");
+            throw new NotFoundException("Друзей нет");
         for (int i : friends){
             User user = getUserToId(i);
             users.add(user);
@@ -59,7 +59,7 @@ public class UserService {
     }
 
     public User addUserToFriend(int id, int friendId){
-        getUserToId(friendId).getFriends().add(id);;
+        getUserToId(friendId).getFriends().add(id);
         log.info("Запрос на добавление в друзья получен.");
         getUserToId(id).getFriends().add(friendId);
         return getUserToId(id);

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
-    private FilmStorage filmStorage;
+    private final FilmStorage filmStorage;
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
 

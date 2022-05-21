@@ -22,8 +22,7 @@ public class User {
     private final LocalDate birthday;
     private Set<Integer> friends;
 
-    public User(int id, String email, String login, String name, LocalDate birthday) {
-        this.id = id;
+    public User( String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
         if (name.isEmpty()) {
