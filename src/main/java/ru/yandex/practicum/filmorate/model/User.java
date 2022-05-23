@@ -33,4 +33,12 @@ public class User {
         this.birthday = birthday;
         friends = new HashSet<>();
     }
+
+    public void addFriends(int id){
+        friends.add(id);
+    }
+
+    public void deleteFriends(int id){
+        friends.remove(id);
+    }
 }

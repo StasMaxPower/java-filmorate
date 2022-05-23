@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storafe.user.UserStorage.UserStorage;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,11 +22,13 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserStorage userStorage;
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    private int userId;
 
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
+        userId = 0;
     }
 
     public List<User> getSameFriendsWithAnotherUser(int id, int otherId){
@@ -54,23 +56,20 @@ public class UserService {
 
     public User deleteUserFromFriend(int id, int friendId){
         log.info("Запрос на удаление из друзей получен.");
-        getUserToId(id).getFriends().remove(friendId);
+        getUserToId(id).deleteFriends(friendId);
         return getUserToId(id);
     }
 
     public User addUserToFriend(int id, int friendId){
-        getUserToId(friendId).getFriends().add(id);
+        getUserToId(friendId).addFriends(id);
         log.info("Запрос на добавление в друзья получен.");
-        getUserToId(id).getFriends().add(friendId);
+        getUserToId(id).addFriends(friendId);
         return getUserToId(id);
     }
 
     public User getUserToId(int id){
         log.info("Запрос на вывод пользователя по ID получен.");
-        return userStorage.getUsers().stream()
-                .filter(x->x.getId() == id)
-                .findFirst()
-                .orElseThrow(()->new NotFoundException("Нет такого юзера"));
+        return userStorage.getUserToId(id);
     }
 
     public Collection<User> getUsers(){
@@ -80,11 +79,29 @@ public class UserService {
 
     public User addUser(User user){
         log.info("Запрос на добавление пользователя получен.");
+        checkUser(user);
+        user.setId(++userId);
         return userStorage.addUser(user);
     }
 
     public User updateUser(User user){
+        checkUser(user);
         log.info("Запрос на обновление пользователя получен.");
         return userStorage.updateUser(user);
+    }
+
+    public void checkUser(User user){
+        if (user.getLogin().isBlank()) {
+            log.info("Логин пользователя не задан");
+            throw new ValidationException("Логин пользователя не задан");
+        }
+        if (user.getEmail().isBlank()||(!user.getEmail().contains("@"))) {
+            log.info("Неверно указана электронная почта");
+            throw new ValidationException("Неверно указана электронная почта");
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.info("Неверная дата рождения");
+            throw new ValidationException("Неверная дата рождения");
+        }
     }
 }

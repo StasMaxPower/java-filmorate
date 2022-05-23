@@ -13,4 +13,6 @@ public interface UserStorage {
     public User addUser(User user);
 
     public User updateUser(User user);
+
+    public User getUserToId(int id);
 }

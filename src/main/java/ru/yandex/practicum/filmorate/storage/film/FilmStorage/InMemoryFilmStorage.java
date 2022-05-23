@@ -17,7 +17,7 @@ import java.util.Map;
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private int filmId = 0;
+
 
     @Override
     public Collection<Film> getFilms(){
@@ -26,44 +26,35 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film){
-        checkFilm(film);
         if (films.containsKey(film.getId())){
             log.info("Такой фильм уже существует");
             throw new ValidationException("Такой фильм уже существует");
         }
-        film.setId(++filmId);
         films.put(film.getId(),film);
         return film;
     }
 
     @Override
     public Film updateFilm(Film film){
-        if (!films.containsKey(film.getId())){
-            log.info("Обновление фильм невозможно - фильм не найден");
-            throw new NotFoundException("Обновление фильм невозможно - фильм не найден");
-        }
-        checkFilm(film);
+        checkId(film.getId());
         films.put(film.getId(),film);
         return film;
     }
 
-    public void checkFilm(Film film){
-        if (film.getName().isEmpty()||film.getName().isBlank()) {
-            log.info("Название фильма не задано");
-            throw new ValidationException("Название фильма не задано");
+    @Override
+    public Film getFilmToId(int id){
+        return films.values().stream()
+                .filter(x->x.getId() == id)
+                .findFirst().orElseGet(()->checkId(id));
+    }
+
+    @Override
+    public Film checkId(int id){
+        if (!films.containsKey(id)){
+            log.info("Фильм не найден");
+            throw new NotFoundException("Фильм не найден");
         }
-        if (film.getDescription().length()>200||film.getDescription().isBlank()) {
-            log.info("Описание фильма не более 200 символов.");
-            throw new ValidationException("Описание фильма не более 200 символов");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
-            log.info("Дата выхода фильма не может быть до 29.12.1895");
-            throw new ValidationException("Дата выхода фильма не может быть до 29.12.1895");
-        }
-        if (film.getDuration()<0) {
-            log.info("Продолжительность фильма не может быть отрицательной");
-            throw new ValidationException("Продолжительность фильма не может быть отрицательной");
-        }
+        return films.get(id);
     }
 
 

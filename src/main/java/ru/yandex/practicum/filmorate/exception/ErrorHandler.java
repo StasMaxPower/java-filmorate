@@ -22,5 +22,9 @@ public class ErrorHandler {
         return Map.of("Ошибка", e.getMessage());
     }
 
-
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> allEx(AllExceptions e){
+        return Map.of("Ошибка", e.getMessage());
+    }
 }
