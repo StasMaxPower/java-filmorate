@@ -12,19 +12,19 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String,String> notFoundEx(NotFoundException e){
+    public Map<String,String> notFoundException(NotFoundException e){
         return Map.of("Ошибка", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String,String> validateEx(ValidationException e){
+    public Map<String,String> validateException(ValidationException e){
         return Map.of("Ошибка", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> allEx(AllExceptions e){
+    public Map<String, String> allException(Throwable e){
         return Map.of("Ошибка", e.getMessage());
     }
 }

@@ -25,7 +25,8 @@ public class Film {
         likes.add(id);
     }
 
-    public void deleteLike(int id){
+    public Film deleteLike(int id){
         likes.remove(id);
+        return this;
     }
 }

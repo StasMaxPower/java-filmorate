@@ -4,8 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage.FilmStorage;
@@ -15,10 +14,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
-    private static final Logger log = LoggerFactory.getLogger(FilmService.class);
     private int filmId;
 
 
@@ -36,16 +35,13 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    public Film deleteLike(int id, int userId){
-        filmStorage.checkId(userId);
-        log.info("Запрос на удаление лайка получен.");
-        getFilmToId(id).deleteLike(userId);
-        return getFilmToId(id);
+    public Film deleteLike(int id, int filmId){
+        return filmStorage.deleteLike(id, filmId);
     }
 
-    public Film addLike(int id, int userId){
+    public Film addLike(int id, int filmId){
         log.info("Запрос на добавление лайка к фильму получен.");
-        getFilmToId(id).addLike(userId);
+        getFilmToId(id).addLike(filmId);
         return getFilmToId(id);
     }
 

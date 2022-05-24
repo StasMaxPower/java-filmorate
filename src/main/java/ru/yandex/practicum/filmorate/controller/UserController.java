@@ -21,7 +21,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @GetMapping("/users/{id}/friends/common/{otherId}")
     public List<User> getSameFriendsWithAnotherUser(@PathVariable int id,@PathVariable int otherId){
         return userService.getSameFriendsWithAnotherUser(id, otherId);

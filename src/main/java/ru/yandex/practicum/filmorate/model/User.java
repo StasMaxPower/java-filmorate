@@ -38,7 +38,8 @@ public class User {
         friends.add(id);
     }
 
-    public void deleteFriends(int id){
+    public User deleteFriends(int id){
         friends.remove(id);
+        return this;
     }
 }

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,10 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserService {
     private final UserStorage userStorage;
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private int userId;
 
     @Autowired
@@ -55,9 +56,7 @@ public class UserService {
     }
 
     public User deleteUserFromFriend(int id, int friendId){
-        log.info("Запрос на удаление из друзей получен.");
-        getUserToId(id).deleteFriends(friendId);
-        return getUserToId(id);
+        return userStorage.deleteUserFromFriend(id, friendId);
     }
 
     public User addUserToFriend(int id, int friendId){

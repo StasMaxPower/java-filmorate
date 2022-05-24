@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storafe.user.UserStorage;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,11 +14,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage{
     private final Map<Integer, User> users = new HashMap<>();
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
+    @Override
+    public User deleteUserFromFriend(int id, int friendId){
+        return getUserToId(id).deleteFriends(friendId);
+    }
 
     @Override
     public Collection<User> getUsers(){

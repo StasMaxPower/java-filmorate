@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface UserStorage {
 
-    //public User addUserToFriends(int id, int friendId);
+    public User deleteUserFromFriend(int id, int friendId);
 
     public Collection<User> getUsers();
 
