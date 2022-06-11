@@ -29,11 +29,11 @@ class FilmControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    Film film = new Film(1,"Matrix", "description", LocalDate.of(2000,01,01), 100);
-    Film filmWithoutName = new Film(1,"", "description", LocalDate.of(2000,01,01), 50);
-    Film filmWitInvalidDesc = new Film(1,"Matrix", "description".repeat(20), LocalDate.of(2000,01,01), 20);
-    Film filmWitInvalidDate = new Film(1,"Matrix", "description", LocalDate.of(1895,01,01), 30);
-    Film filmWitInvalidDuration = new Film(1,"Matrix", "description", LocalDate.of(2000,01,01), -1);
+    Film film = new Film("Matrix", "description", LocalDate.of(2000,01,01), 100);
+    Film filmWithoutName = new Film("", "description", LocalDate.of(2000,01,01), 50);
+    Film filmWitInvalidDesc = new Film("Matrix", "description".repeat(20), LocalDate.of(2000,01,01), 20);
+    Film filmWitInvalidDate = new Film("Matrix", "description", LocalDate.of(1895,01,01), 30);
+    Film filmWitInvalidDuration = new Film("Matrix", "description", LocalDate.of(2000,01,01), -1);
 
     @Test
     void createValidFilmResponseShouldBeOk() throws Exception {

@@ -26,16 +26,16 @@ class UserControllerTests {
 	@Autowired
 	MockMvc mockMvc;
 
-	User user = new User(1,"123@mail.ru", "Vasya", "Vasiliy", LocalDate.of(1997,01,01) );
-	User userWithoutName = new User(2,"123@mail.ru", "Vasya", "", LocalDate.of(1997,01,01) );
-	User userWithoutLogin = new User(3,"123@mail.ru", "", "Vasiliy", LocalDate.of(1997,01,01) );
-	User userWithInvalidBirthday = new User(4,"123@mail.ru", "", "Vasiliy", LocalDate.of(2022,06,01) );
-	User userWithInvalidEmail = new User(5,"123mail.ru", "", "Vasiliy", LocalDate.of(2022,06,01) );
+	User user = new User("123@mail.ru", "Vasya", "Vasiliy", LocalDate.of(1997,01,01) );
+	User userWithoutName = new User("123@mail.ru", "Vasya", "", LocalDate.of(1997,01,01) );
+	User userWithoutLogin = new User("123@mail.ru", "", "Vasiliy", LocalDate.of(1997,01,01) );
+	User userWithInvalidBirthday = new User("123@mail.ru", "", "Vasiliy", LocalDate.of(2022,06,01) );
+	User userWithInvalidEmail = new User("123mail.ru", "", "Vasiliy", LocalDate.of(2022,06,01) );
 
 
 	@Test
 	void createValidUserResponseShouldBeOk() throws Exception {
-		this.mockMvc.perform(put("/users")
+		this.mockMvc.perform(post("/users")
 						.content(mapper.writeValueAsString(user))
 						.contentType(MediaType.APPLICATION_JSON))
 						.andExpect(status().isOk());
@@ -43,7 +43,7 @@ class UserControllerTests {
 
 	@Test
 	void createValidUserWithoutNameShouldBeNameAsLogin() throws Exception {
-		this.mockMvc.perform(put("/users")
+		this.mockMvc.perform(post("/users")
 						.content(mapper.writeValueAsString(userWithoutName))
 						.contentType(MediaType.APPLICATION_JSON))
 						.andExpect(status().isOk())
