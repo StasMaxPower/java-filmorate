@@ -1,17 +1,14 @@
-package ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+package ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -21,8 +18,18 @@ public class InMemoryFilmStorage implements FilmStorage {
 
 
     @Override
+    public Film addLike(int filmId, int userId) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getPopularFilms(int count) {
+        return null;
+    }
+
+    @Override
     public Film deleteLike(int id, int filmId){
-        checkId(filmId);
+        checkFilmId(filmId);
        return getFilmToId(id).deleteLike(filmId);
     }
     @Override
@@ -42,7 +49,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film){
-        checkId(film.getId());
+        checkFilmId(film.getId());
         films.put(film.getId(),film);
         return film;
     }
@@ -51,11 +58,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilmToId(int id){
         return films.values().stream()
                 .filter(x->x.getId() == id)
-                .findFirst().orElseGet(()->checkId(id));
+                .findFirst().orElseGet(()->checkFilmId(id));
     }
 
     @Override
-    public Film checkId(int id){
+    public Film checkFilmId(int id){
         if (!films.containsKey(id)){
             log.info("Фильм не найден");
             throw new NotFoundException("Фильм не найден");

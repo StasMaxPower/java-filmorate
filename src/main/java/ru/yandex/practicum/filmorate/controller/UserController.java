@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/friends")
-    public ArrayList<User> getUsersFriends(@PathVariable int id){
+    public List<User> getUsersFriends(@PathVariable int id){
         return userService.getUsersFriends(id);
     }
 

@@ -1,23 +1,35 @@
-package ru.yandex.practicum.filmorate.storafe.user.UserStorage;
+package ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage{
     private final Map<Integer, User> users = new HashMap<>();
+
+    @Override
+    public List<User> getSameFriendsWithAnotherUser(int id, int otherId) {
+        return null;
+    }
+
+    @Override
+    public User addUserToFriend(int id, int friendId) {
+        return null;
+    }
+
+    @Override
+    public List<User> getUsersFriends(int id) {
+        return null;
+    }
 
     @Override
     public User deleteUserFromFriend(int id, int friendId){
