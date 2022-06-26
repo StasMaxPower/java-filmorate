@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.UserStorage;
+package ru.yandex.practicum.filmorate.storage.userStorage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,7 +34,7 @@ public class UserDbStorage implements UserStorage {
                 " where USER_ID = ? and FRIEND_ID in (select FRIEND_ID from FRIENDS" +
                 " where USER_ID = ? )", id, otherId);
         while (userRows.next()) {
-            user = getUserToId(userRows.getInt("FRIEND_ID"));
+            user = getToId(userRows.getInt("FRIEND_ID"));
             result.add(user);
         }
         return result;
@@ -47,37 +47,37 @@ public class UserDbStorage implements UserStorage {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select FRIEND_ID from FRIENDS" +
                 " where USER_ID = ?", id);
         while (userRows.next()) {
-            user = getUserToId(userRows.getInt("FRIEND_ID"));
+            user = getToId(userRows.getInt("FRIEND_ID"));
             result.add(user);
         }
         return result;
     }
 
     @Override
-    public User addUserToFriend(int id, int friendId){
+    public User addToFriend(int id, int friendId){
         checkId(id);
         checkId(friendId);
-        User user = getUserToId(id);
+        User user = getToId(id);
         String sql = "insert into FRIENDS(FRIEND_ID, USER_ID, STATUS) values ( ?,?,'true')";
         jdbcTemplate.update(sql, friendId, id);
         return user;
     }
 
     @Override
-    public User deleteUserFromFriend(int id, int friendId) {
+    public User deleteFromFriend(int id, int friendId) {
         String sql = "delete  from FRIENDS where USER_ID = ? and FRIEND_ID = ?";
         jdbcTemplate.update(sql, id, friendId);
-        return getUserToId(id);
+        return getToId(id);
     }
 
     @Override
-    public Collection<User> getUsers() {
+    public Collection<User> getAll() {
         String sqlQuery = "select * from users";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 
     @Override
-    public User addUser(User user) {
+    public User add(User user) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("users").usingGeneratedKeyColumns("user_id");
         SqlParameterSource parameters = new MapSqlParameterSource()
@@ -92,7 +92,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User updateUser(User user) {
+    public User update(User user) {
         checkId(user.getId());
         String sql = " update USERS SET NAME = ?, LOGIN = ?, EMAIL = ?, BIRTHDAY = ?" +
                 "where USER_ID = ?";
@@ -103,11 +103,12 @@ public class UserDbStorage implements UserStorage {
                 user.getBirthday(),
                 user.getId()
         );
+        log.info("Пользователь обновлен: {} {}", user.getId(), user.getName());
         return user;
     }
 
     @Override
-    public User getUserToId(int id) {
+    public User getToId(int id) {
         checkId(id);
         String sqlQuery = "select * from USERS where USER_ID = ?";
         User user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);

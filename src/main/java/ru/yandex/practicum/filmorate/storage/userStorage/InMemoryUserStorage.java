@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.UserStorage;
+package ru.yandex.practicum.filmorate.storage.userStorage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public User addUserToFriend(int id, int friendId) {
+    public User addToFriend(int id, int friendId) {
         return null;
     }
 
@@ -32,17 +32,17 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public User deleteUserFromFriend(int id, int friendId){
-        return getUserToId(id).deleteFriends(friendId);
+    public User deleteFromFriend(int id, int friendId){
+        return getToId(id).deleteFriends(friendId);
     }
 
     @Override
-    public Collection<User> getUsers(){
+    public Collection<User> getAll(){
         return users.values();
     }
 
     @Override
-    public User addUser(User user){
+    public User add(User user){
         if (users.containsKey(user.getId())){
             log.info("Такой пользователь уже существует");
             throw new ValidationException("Такой пользователь уже существует");
@@ -52,14 +52,14 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public User updateUser(User user){
+    public User update(User user){
         checkId(user.getId());
         users.put(user.getId(),user);
         return user;
     }
 
     @Override
-    public User getUserToId(int id){
+    public User getToId(int id){
         return users.values().stream()
                 .filter(x->x.getId() == id)
                 .findFirst()

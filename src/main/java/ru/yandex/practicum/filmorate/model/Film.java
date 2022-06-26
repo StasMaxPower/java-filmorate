@@ -40,9 +40,6 @@ public class Film {
     }
 
 
-    public void addLike(int id){
-        likes.add(id);
-    }
 
     public Film deleteLike(int id){
         likes.remove(id);

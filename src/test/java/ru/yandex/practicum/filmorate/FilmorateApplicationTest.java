@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.core.ApplicationContext;
 import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.filmStorage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.userStorage.UserDbStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -67,7 +65,7 @@ class FilmoRateApplicationTests {
 
     @Test
     public void bTestFindFilmById() {
-        filmStorage.addFilm(film);
+        filmStorage.add(film);
         Film filmOptional = filmStorage.getFilmToId(1);
         assertThat(filmOptional)
                 .hasFieldOrPropertyWithValue("id", 1)
@@ -85,7 +83,7 @@ class FilmoRateApplicationTests {
 
     @Test
     public void fTestGetAllFilms() {
-        Collection<Film> films = filmStorage.getFilms();
+        Collection<Film> films = filmStorage.getAll();
         assertThat(films).size().isNotNull();
         assertThat(films.size()).isEqualTo(1);
     }

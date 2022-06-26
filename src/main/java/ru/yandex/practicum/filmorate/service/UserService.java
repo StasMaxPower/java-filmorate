@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -34,35 +34,35 @@ public class UserService {
     }
 
     public User deleteUserFromFriend(int id, int friendId){
-        return userStorage.deleteUserFromFriend(id, friendId);
+        return userStorage.deleteFromFriend(id, friendId);
     }
 
     public User addUserToFriend(int id, int friendId){
         log.info("Запрос на добавление в друзья получен.");
-        return userStorage.addUserToFriend(id, friendId);
+        return userStorage.addToFriend(id, friendId);
     }
 
     public User getUserToId(int id){
         log.info("Запрос на вывод пользователя по ID получен.");
-        return userStorage.getUserToId(id);
+        return userStorage.getToId(id);
     }
 
     public Collection<User> getUsers(){
         log.info("Запрос на вывод пользователей получен.");
-        return userStorage.getUsers();
+        return userStorage.getAll();
     }
 
     public User addUser(User user){
         log.info("Запрос на добавление пользователя получен.");
         checkUser(user);
         user.setId(++userId);
-        return userStorage.addUser(user);
+        return userStorage.add(user);
     }
 
     public User updateUser(User user){
         checkUser(user);
         log.info("Запрос на обновление пользователя получен.");
-        return userStorage.updateUser(user);
+        return userStorage.update(user);
     }
 
     public void checkUser(User user){

@@ -2,10 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +13,8 @@ public class User {
     private int id;
     @Email
     private  String email;
-    @NotBlank
+
+    @Pattern(regexp = "^\\S*$")
     private  String login;
     private String name;
     @Past

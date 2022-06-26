@@ -32,6 +32,16 @@ public class MpaStorage {
                 new Mpa(rs.getInt("rating_id"), rs.getString("name")), id);
     }
 
+/*    public Mpa getMpa(int id){
+        String sql = "SELECT NAME FROM RATING WHERE RATING_ID = ?";
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
+        if (rows.next()) {
+            return new Mpa(id,
+                    rows.getString("name"));
+        }
+        else return null;
+    }*/
+
     public void checkId(int id){
          SqlRowSet rows = jdbcTemplate.queryForRowSet("select * from RATING where RATING_ID = ?", id);
          if (!rows.next()) throw new NotFoundException("Такого рейтинга нет");

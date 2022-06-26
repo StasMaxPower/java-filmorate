@@ -7,62 +7,64 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.FilmStorage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.filmStorage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.likesStorage.LikesStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final LikesStorage likesStorage;
     private int filmId;
 
 
     @Autowired
-    public FilmService(@Qualifier("filmDbStorage")FilmStorage filmStorage) {
+    public FilmService(@Qualifier("filmDbStorage")FilmStorage filmStorage, LikesStorage likesStorage) {
         this.filmStorage = filmStorage;
+        this.likesStorage = likesStorage;
         filmId = 0;
     }
 
     public List<Film> getPopularFilms(int count){
         log.info("Запрос на вывод популярных фильмов получен.");
-        return filmStorage.getPopularFilms(count);
+        return filmStorage.getPopular(count);
     }
 
     public Film deleteLike(int id, int filmId){
-        return filmStorage.deleteLike(id, filmId);
+        return likesStorage.deleteLike(id, filmId);
     }
 
     public Film addLike(int id, int filmId){
         log.info("Запрос на добавление лайка к фильму получен.");
-        return filmStorage.addLike(id, filmId);
+        return likesStorage.addLike(id, filmId);
     }
 
     public Film getFilmToId(int id){
         log.info("Запрос на вывод фильма по ID получен.");
-        return filmStorage.getFilmToId(id);
+        return filmStorage.getToId(id);
     }
 
     public Collection<Film> getFilms(){
         log.info("Запрос на вывод фильмов получен.");
-        return filmStorage.getFilms();
+        return filmStorage.getAll();
     }
 
     public Film addFilm(Film film){
         log.info("Запрос на добавление фильма получен.");
         checkFilm(film);
         //film.setId(++filmId);
-        return filmStorage.addFilm(film);
+        return filmStorage.add(film);
     }
 
     public Film updateFilm(Film film){
         log.info("Запрос на обновление фильма получен.");
         checkFilm(film);
-        Film updateFilm = filmStorage.updateFilm(film);
+        Film updateFilm = filmStorage.update(film);
         if (film.getGenres() == null)
             updateFilm.setGenres(null);
         else if (film.getGenres().isEmpty())

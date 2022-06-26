@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.FilmStorage;
+package ru.yandex.practicum.filmorate.storage.filmStorage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,28 +17,28 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
 
 
-    @Override
+    //@Override
     public Film addLike(int filmId, int userId) {
         return null;
     }
 
     @Override
-    public List<Film> getPopularFilms(int count) {
+    public List<Film> getPopular(int count) {
         return null;
     }
 
-    @Override
+    //@Override
     public Film deleteLike(int id, int filmId){
         checkFilmId(filmId);
-       return getFilmToId(id).deleteLike(filmId);
+       return getToId(id).deleteLike(filmId);
     }
     @Override
-    public Collection<Film> getFilms(){
+    public Collection<Film> getAll(){
         return films.values();
     }
 
     @Override
-    public Film addFilm(Film film){
+    public Film add(Film film){
         if (films.containsKey(film.getId())){
             log.info("Такой фильм уже существует");
             throw new ValidationException("Такой фильм уже существует");
@@ -48,14 +48,14 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(Film film){
+    public Film update(Film film){
         checkFilmId(film.getId());
         films.put(film.getId(),film);
         return film;
     }
 
     @Override
-    public Film getFilmToId(int id){
+    public Film getToId(int id){
         return films.values().stream()
                 .filter(x->x.getId() == id)
                 .findFirst().orElseGet(()->checkFilmId(id));
