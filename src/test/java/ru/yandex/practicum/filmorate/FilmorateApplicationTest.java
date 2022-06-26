@@ -40,8 +40,8 @@ class FilmoRateApplicationTests {
 
     @Test
     public void aTestFindUserById() {
-        userStorage.addUser(user);
-        User userOptional = userStorage.getUserToId(1);
+        userStorage.add(user);
+        User userOptional = userStorage.getToId(1);
         assertThat(userOptional)
                 .hasFieldOrPropertyWithValue("id", 1)
                 .hasFieldOrPropertyWithValue("name", "Vasiliy");
@@ -49,8 +49,8 @@ class FilmoRateApplicationTests {
 
     @Test
     public void cTestUpdateUser() {
-        userStorage.updateUser(userToUpdate);
-        User userOptional = userStorage.getUserToId(userToUpdate.getId());
+        userStorage.update(userToUpdate);
+        User userOptional = userStorage.getToId(userToUpdate.getId());
         assertThat(userOptional)
                 .hasFieldOrPropertyWithValue("id", 1)
                 .hasFieldOrPropertyWithValue("name","Ivan");
@@ -58,7 +58,7 @@ class FilmoRateApplicationTests {
 
     @Test
     public void dTestGetAllUser() {
-        Collection<User> users = userStorage.getUsers();
+        Collection<User> users = userStorage.getAll();
         assertThat(users).size().isNotNull();
         assertThat(users.size()).isEqualTo(1);
     }
@@ -66,7 +66,7 @@ class FilmoRateApplicationTests {
     @Test
     public void bTestFindFilmById() {
         filmStorage.add(film);
-        Film filmOptional = filmStorage.getFilmToId(1);
+        Film filmOptional = filmStorage.getToId(1);
         assertThat(filmOptional)
                 .hasFieldOrPropertyWithValue("id", 1)
                 .hasFieldOrPropertyWithValue("name", "Matrix");
@@ -74,8 +74,8 @@ class FilmoRateApplicationTests {
 
     @Test
     public void eTestUpdateFilm() {
-        filmStorage.updateFilm(filmToUpdate);
-        Film filmOptional = filmStorage.getFilmToId(filmToUpdate.getId());
+        filmStorage.update(filmToUpdate);
+        Film filmOptional = filmStorage.getToId(filmToUpdate.getId());
         assertThat(filmOptional)
                 .hasFieldOrPropertyWithValue("id", 1)
                 .hasFieldOrPropertyWithValue("name", "Matrix: Revolution");
