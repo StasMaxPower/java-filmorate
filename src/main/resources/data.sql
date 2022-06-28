@@ -23,3 +23,5 @@ insert into RATING(RATING_ID, NAME) VALUES ( '2','PG' );
 insert into RATING(RATING_ID, NAME) VALUES ( '3','PG-13' );
 insert into RATING(RATING_ID, NAME) VALUES ( '4','R' );
 insert into RATING(RATING_ID, NAME) VALUES ( '5','NC-17' );
+
+select * from GENRE
