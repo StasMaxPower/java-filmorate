@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE;
+DROP TABLE IF EXISTS DIRECTORS, FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE;
 
 create table if not exists USERS
 (
@@ -68,6 +68,14 @@ create table if not exists RATING
     NAME      CHARACTER VARYING(30) not null,
     constraint RATING_PK
         primary key (RATING_ID)
+);
+
+create table if not exists DIRECTORS
+(
+    DIRECTOR_ID INTEGER auto_increment,
+    NAME CHARACTER VARYING(30) not null,
+    constraint DIRECTOR_PK
+    primary key (DIRECTOR_ID)
 );
 
 
