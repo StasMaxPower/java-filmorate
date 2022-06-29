@@ -19,4 +19,7 @@ public interface UserStorage {
     public User update(User user);
 
     public User getToId(int id);
+
+    void deleteUser(int id);
+
 }

@@ -42,6 +42,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getUsersFriends(int id) {
+        checkId(id);
         List<User> result = new ArrayList<>();
         User user;
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select FRIEND_ID from FRIENDS" +
@@ -114,6 +115,15 @@ public class UserDbStorage implements UserStorage {
         User user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
         log.info("Пользователь найден: {} {}", user.getId(), user.getName());
         return user;
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        getToId(id);
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
+
+        jdbcTemplate.update(sqlQuery, id);
+        log.info("User with id '{}' deleted", id);
     }
 
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
