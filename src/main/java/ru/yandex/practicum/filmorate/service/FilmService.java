@@ -30,9 +30,9 @@ public class FilmService {
         filmId = 0;
     }
 
-    public List<Film> getPopularFilms(int count){
+    public List<Film> getPopularFilms(int count, int genreId, int year){
         log.info("Запрос на вывод популярных фильмов получен.");
-        return filmStorage.getPopular(count);
+        return filmStorage.getPopular(count, genreId, year);
     }
 
     public Film deleteLike(int id, int filmId){

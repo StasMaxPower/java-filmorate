@@ -9,7 +9,7 @@ public interface FilmStorage {
 
 
     //public Film addLike( int filmId,  int userId);
-    public List<Film> getPopular(int count);
+    public List<Film> getPopular(int count, int genreId, int year);
     //public Film deleteLike(int id, int filmId);
 
     public Collection<Film> getAll();

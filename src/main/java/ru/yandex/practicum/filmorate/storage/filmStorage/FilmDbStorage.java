@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.genrestorage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpaStorage.MpaStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -29,13 +30,25 @@ public class FilmDbStorage implements FilmStorage{
     }
 
     @Override
-    public List<Film> getPopular(int count){
-        String sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
-                "f.rating, count(l.user_id) as count_films " +
-                "from films f left join likes l on f.film_id = l.film_id " +
-                "group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
-                "order by count_films desc " +
-                "limit ?";
+    public List<Film> getPopular(int count, int genreId, int year){
+        String searchByGenre = "";
+        String searchByYear = "";
+
+        if (genreId != 0) searchByGenre = " = ? ";
+        else searchByGenre = " > ? OR fg.genre_id IS NULL ";
+
+        if (year != 0)  searchByYear = " = ? ";
+        else searchByYear = " > ? ";
+
+        String sql = "SELECT f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating, count(l.user_id) AS count_films " +
+                "FROM films AS f " +
+                "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                "LEFT JOIN films_genre AS fg ON f.film_id = fg.film_id " +
+                "WHERE EXTRACT(YEAR FROM CAST(f.releasedate AS date)) " + searchByYear +
+                "AND (fg.genre_id " + searchByGenre + ") " +
+                "GROUP BY f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
+                "ORDER BY count_films desc " +
+                "LIMIT ?";
         return jdbcTemplate.query(sql,(rs, rowNum) -> new Film(
                 rs.getInt("film_id"),
                 rs.getString("name"),
@@ -44,7 +57,7 @@ public class FilmDbStorage implements FilmStorage{
                 rs.getInt("duration"),
                 mpaStorage.getMpaToId(rs.getInt("rating")),
                 genreStorage.getGenres(rs.getInt("film_id"))),
-                count);
+                year, genreId, count);
     }
 
     @Override

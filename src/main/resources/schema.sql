@@ -71,5 +71,5 @@ create table if not exists RATING
 );
 
 
-insert into USERS(NAME, EMAIL, LOGIN, BIRTHDAY) values ( 'vasya', '123@mail.ru','123','1990-01-01' );
-select * from USERS
+--insert into USERS(NAME, EMAIL, LOGIN, BIRTHDAY) values ( 'vasya', '123@mail.ru','123','1990-01-01' );
+--select * from USERS
