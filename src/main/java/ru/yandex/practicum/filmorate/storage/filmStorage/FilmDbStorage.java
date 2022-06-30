@@ -35,7 +35,7 @@ public class FilmDbStorage implements FilmStorage{
                 "FROM films AS f " +
                 "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
                 "WHERE l.user_id = ? and f.film_id in " +
-                "(select films.film_id from films where films.film_id = l.film_id and l.user_id = ?) " +
+                "(select films.film_id from films, likes where films.film_id = likes.film_id and likes.user_id = ?) " +
                 "GROUP BY f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
                 "ORDER BY count_films desc ";
         return jdbcTemplate.query(sql,(rs, rowNum) -> new Film(
