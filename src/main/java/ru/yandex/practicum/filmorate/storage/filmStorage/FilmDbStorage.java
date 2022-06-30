@@ -33,32 +33,28 @@ public class FilmDbStorage implements FilmStorage{
 
     @Override
     public List<Film> getBySearch(String query, List<String> by){
-        String sql = "";
-        if (by.contains("title")&&by.size()==1)
-            sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
-                    "f.rating, count(l.user_id) as count_films " +
-                    "from films f left join likes l on f.film_id = l.film_id " +
-                    "where name LIKE '%?%' " +
-                    "group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
-                    "order by count_films desc ";
+        String param1 = "";
+        String param2 = "";
+        if (by.contains("title")&&by.size()==1){
+            param1 = query;
+            param2 = "%";
+        }
+        if (by.contains("title")&&by.contains("director")&&by.size()==2){
+            param1 = query;
+            param2 = query;
+        }
+        if (by.contains("director")&&by.size()==1){
+            param1 = "%";
+            param2 = query;
+        }
 
-/*        if (by.contains("title")&&by.contains("director")&&by.size()==2)
-            sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
-                "f.rating, count(l.user_id) as count_films " +
-                "from films f left join likes l on f.film_id = l.film_id " +
-                "where name LIKE '%?%' and director_id=directors.director_id and " +
-                 "directors.name = ? " +
-                "group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
-                "order by count_films desc ";*/
-/*        if (by.contains("director")&&by.size()==1)
-            sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
-                    "f.rating, count(l.user_id) as count_films " +
-                    "from films f left join likes l on f.film_id = l.film_id " +
-                    "where director_id=directors.director_id and " +
-                    "directors.name = ? " +
-                    "group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
-                    "order by count_films desc ";*/
-
+        String sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
+                    " f.rating, count(l.user_id) as count_films " +
+                    " from films f left join likes l on f.film_id = l.film_id " +
+                    " where name LIKE '%?%' " +
+               //     " and director_id=directors.director_id and directors.name = ? "+
+                    " group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
+                    " order by count_films desc ";
         return  jdbcTemplate.query(sql, this::mapRowToFilm,query);
     }
     @Override
