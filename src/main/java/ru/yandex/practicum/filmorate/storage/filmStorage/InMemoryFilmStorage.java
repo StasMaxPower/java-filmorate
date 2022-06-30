@@ -62,6 +62,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public void deleteFilm(int id){
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    @Override
     public Film checkFilmId(int id){
         if (!films.containsKey(id)){
             log.info("Фильм не найден");
@@ -69,6 +74,5 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         return films.get(id);
     }
-
 
 }

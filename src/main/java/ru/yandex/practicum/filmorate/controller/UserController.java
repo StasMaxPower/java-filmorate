@@ -22,44 +22,47 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> getSameFriendsWithAnotherUser(@PathVariable int id,@PathVariable int otherId){
+    public List<User> getSameFriendsWithAnotherUser(@PathVariable int id, @PathVariable int otherId) {
         return userService.getSameFriendsWithAnotherUser(id, otherId);
     }
 
     @GetMapping("/users/{id}/friends")
-    public List<User> getUsersFriends(@PathVariable int id){
+    public List<User> getUsersFriends(@PathVariable int id) {
         return userService.getUsersFriends(id);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
-    public User deleteUserFromFriend(@PathVariable int id,@PathVariable int friendId){
+    public User deleteUserFromFriend(@PathVariable int id, @PathVariable int friendId) {
         return userService.deleteUserFromFriend(id, friendId);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public User addUserToFriend(@PathVariable int id,@PathVariable int friendId){
+    public User addUserToFriend(@PathVariable int id, @PathVariable int friendId) {
         return userService.addUserToFriend(id, friendId);
     }
 
     @GetMapping("/users/{id}")
-    public User getUserToId(@PathVariable int id){
+    public User getUserToId(@PathVariable int id) {
         return userService.getUserToId(id);
     }
 
     @GetMapping("/users")
-    public Collection<User> getUsers(){
+    public Collection<User> getUsers() {
         return userService.getUsers();
     }
 
     @PostMapping(value = "/users")
-    public User addUser(@Valid @RequestBody User user){
+    public User addUser(@Valid @RequestBody User user) {
         return userService.addUser(user);
     }
 
     @PutMapping("/users")
-    public User updateUser(@Valid @RequestBody User user){
+    public User updateUser(@Valid @RequestBody User user) {
         return userService.updateUser(user);
     }
 
-
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable int id){
+        userService.deleteUser(id);
+    }
 }
