@@ -65,6 +65,12 @@ public class UserService {
         return userStorage.update(user);
     }
 
+    public void deleteUser(int id) {
+        log.info("Delete request received");
+        userStorage.deleteUser(id);
+    }
+
+
     public void checkUser(User user){
         if (user.getLogin().isBlank()) {
             log.info("Логин пользователя не задан");
@@ -81,4 +87,5 @@ public class UserService {
         if (user.getName().isEmpty())
             user.setName(user.getLogin());
     }
+
 }
