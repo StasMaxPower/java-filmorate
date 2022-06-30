@@ -10,9 +10,12 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.genrestorage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpaStorage.MpaStorage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 @Slf4j
@@ -28,6 +31,36 @@ public class FilmDbStorage implements FilmStorage{
         this.mpaStorage = mpaStorage;
     }
 
+    @Override
+    public List<Film> getBySearch(String query, List<String> by){
+        String sql = "";
+        if (by.contains("title")&&by.size()==1)
+            sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
+                    "f.rating, count(l.user_id) as count_films " +
+                    "from films f left join likes l on f.film_id = l.film_id " +
+                    "where name LIKE '%?%' " +
+                    "group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
+                    "order by count_films desc ";
+
+/*        if (by.contains("title")&&by.contains("director")&&by.size()==2)
+            sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
+                "f.rating, count(l.user_id) as count_films " +
+                "from films f left join likes l on f.film_id = l.film_id " +
+                "where name LIKE '%?%' and director_id=directors.director_id and " +
+                 "directors.name = ? " +
+                "group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
+                "order by count_films desc ";*/
+/*        if (by.contains("director")&&by.size()==1)
+            sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
+                    "f.rating, count(l.user_id) as count_films " +
+                    "from films f left join likes l on f.film_id = l.film_id " +
+                    "where director_id=directors.director_id and " +
+                    "directors.name = ? " +
+                    "group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
+                    "order by count_films desc ";*/
+
+        return  jdbcTemplate.query(sql, this::mapRowToFilm,query);
+    }
     @Override
     public List<Film> getPopular(int count){
         String sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
@@ -125,5 +158,16 @@ public class FilmDbStorage implements FilmStorage{
         SqlRowSet rows = jdbcTemplate.queryForRowSet("select * from FILMS where FILM_ID = ?", id);
         if (!rows.next()) throw new NotFoundException("Нет такого фильма");
         return null;
+    }
+
+    private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
+        return new Film(
+                rs.getInt("film_id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("releasedate").toLocalDate(),
+                rs.getInt("duration"),
+                mpaStorage.getMpaToId(rs.getInt("rating")),
+                genreStorage.getGenres(rs.getInt("film_id")));
     }
 }

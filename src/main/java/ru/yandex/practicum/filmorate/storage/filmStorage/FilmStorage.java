@@ -12,6 +12,8 @@ public interface FilmStorage {
     public List<Film> getPopular(int count);
     //public Film deleteLike(int id, int filmId);
 
+    public List<Film> getBySearch(String query, List<String> by);
+
     public Collection<Film> getAll();
 
     public Film add(Film film);

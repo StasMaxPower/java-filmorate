@@ -27,6 +27,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return null;
     }
 
+    @Override
+    public List<Film> getBySearch(String query, List<String> by) {
+        return null;
+    }
+
     //@Override
     public Film deleteLike(int id, int filmId){
         checkFilmId(filmId);

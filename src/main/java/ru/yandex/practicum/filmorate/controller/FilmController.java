@@ -14,6 +14,7 @@ import java.util.*;
 
 @RestController
 public class FilmController {
+
     private final FilmService filmService;
 
     @Autowired
@@ -21,7 +22,10 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-
+    @GetMapping("/fimls/search")
+    public List<Film> getFimsBySearch(@RequestParam String query, @RequestParam List<String> by){
+        return filmService.getFimsBySearch(query, by);
+    }
     @GetMapping(value = {"/films/popular"})
     public List<Film> getPopularFilms(@RequestParam (defaultValue = "10") int count){
         return filmService.getPopularFilms(count);

@@ -30,6 +30,10 @@ public class FilmService {
         filmId = 0;
     }
 
+    public List <Film> getFimsBySearch(String query, List<String> by){
+        return filmStorage.getBySearch(query, by);
+    }
+
     public List<Film> getPopularFilms(int count){
         log.info("Запрос на вывод популярных фильмов получен.");
         return filmStorage.getPopular(count);
