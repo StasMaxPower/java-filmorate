@@ -30,6 +30,10 @@ public class FilmService {
         filmId = 0;
     }
 
+    public List<Film>  getCommonFilms(int userId,int friendId){
+        return filmStorage.getCommon(userId, friendId);
+    }
+
     public List<Film> getPopularFilms(int count, int genreId, int year){
         log.info("Запрос на вывод популярных фильмов получен.");
         return filmStorage.getPopular(count, genreId, year);

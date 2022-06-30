@@ -12,6 +12,8 @@ public interface FilmStorage {
     public List<Film> getPopular(int count, int genreId, int year);
     //public Film deleteLike(int id, int filmId);
 
+    public List<Film>  getCommon(int userId,int friendId);
+
     public Collection<Film> getAll();
 
     public Film add(Film film);

@@ -21,6 +21,11 @@ public class FilmController {
         this.filmService = filmService;
     }
 
+    @GetMapping("/films/common")
+    public List<Film> getCommonFilms(@RequestParam  int userId,
+                                      @RequestParam int friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 
     @GetMapping(value = {"/films/popular"})
     public List<Film> getPopularFilms(@RequestParam (defaultValue = "10") int count,
