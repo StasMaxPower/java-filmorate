@@ -23,8 +23,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopular(int count) {
+    public List<Film> getPopular(int count, int genreId, int year) {
         return null;
+    }
+
+    @Override
+    public List<Film> getCommon(int userId, int friendId) {
+        throw new UnsupportedOperationException();
     }
 
     //@Override
@@ -59,6 +64,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values().stream()
                 .filter(x->x.getId() == id)
                 .findFirst().orElseGet(()->checkFilmId(id));
+    }
+
+    @Override
+    public void deleteFilm(int id){
+        throw new UnsupportedOperationException("not implemented");
     }
 
     @Override

@@ -1,12 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.SortBy;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -18,10 +22,17 @@ public class FilmController {
         this.filmService = filmService;
     }
 
+    @GetMapping("/films/common")
+    public List<Film> getCommonFilms(@RequestParam  int userId,
+                                      @RequestParam int friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 
     @GetMapping(value = {"/films/popular"})
-    public List<Film> getPopularFilms(@RequestParam (defaultValue = "10") int count){
-        return filmService.getPopularFilms(count);
+    public List<Film> getPopularFilms(@RequestParam (defaultValue = "10") int count,
+                                      @RequestParam (defaultValue = "0") int genreId,
+                                      @RequestParam (defaultValue = "0") int year){
+        return filmService.getPopularFilms(count, genreId, year);
     }
 
     @DeleteMapping("/films/{id}/like/{userId}")
@@ -54,6 +65,10 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
+    @DeleteMapping("/films/{id}")
+    public void deleteFilm(@PathVariable int id){
+        filmService.deleteFilm(id);
+    }
     //GET /films/director/{directorId}?sortBy=[year,likes]
     @GetMapping(value = {"/films/director/{directorId}"})
     public List<Film> getFilmsByDirector(@PathVariable int directorId,@RequestParam SortBy sortBy){

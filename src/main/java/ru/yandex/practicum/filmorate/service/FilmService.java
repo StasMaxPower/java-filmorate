@@ -33,9 +33,14 @@ public class FilmService {
         filmId = 0;
     }
 
-    public List<Film> getPopularFilms(int count) {
+    public List<Film>  getCommonFilms(int userId,int friendId){
+        log.info("Запрос на вывод общих фильмов пользователей с ID {} и {} получен.", userId, friendId);
+        return filmStorage.getCommon(userId, friendId);
+    }
+
+    public List<Film> getPopularFilms(int count, int genreId, int year){
         log.info("Запрос на вывод популярных фильмов получен.");
-        return filmStorage.getPopular(count);
+        return filmStorage.getPopular(count, genreId, year);
     }
 
     public List<Film> getFilmsByDirector(int directorId, SortBy sortBy) {
@@ -96,6 +101,11 @@ public class FilmService {
         else if (film.getDirectors().isEmpty())
             updateFilm.setDirectors(new HashSet<Director>());
         return updateFilm;
+    }
+
+    public void deleteFilm(int id) {
+        log.info("Delete request received");
+        filmStorage.deleteFilm(id);
     }
 
     public void checkFilm(Film film) {
