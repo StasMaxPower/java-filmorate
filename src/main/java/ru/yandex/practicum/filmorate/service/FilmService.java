@@ -31,6 +31,7 @@ public class FilmService {
     }
 
     public List<Film>  getCommonFilms(int userId,int friendId){
+        log.info("Запрос на вывод общих фильмов пользователей с ID {} и {} получен.", userId, friendId);
         return filmStorage.getCommon(userId, friendId);
     }
 

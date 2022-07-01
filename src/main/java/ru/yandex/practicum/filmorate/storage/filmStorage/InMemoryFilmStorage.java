@@ -29,7 +29,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getCommon(int userId, int friendId) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     //@Override
