@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -64,5 +65,10 @@ public class UserController {
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable int id){
         userService.deleteUser(id);
+    }
+
+    @GetMapping("/users/{id}/recommendations")
+    public List<Film> getRecommendationsForUserById(@PathVariable int id) {
+        return userService.getRecommendationsForUserById(id);
     }
 }
