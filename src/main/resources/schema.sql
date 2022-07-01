@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS DIRECTORS, FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE;
+DROP TABLE IF EXISTS DIRECTORS, FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE, FILM_DIRECTORS;
 
 create table if not exists USERS
 (
@@ -70,6 +70,7 @@ create table if not exists RATING
         primary key (RATING_ID)
 );
 
+--Создание таблицы режиссеров
 create table if not exists DIRECTORS
 (
     DIRECTOR_ID INTEGER auto_increment,
@@ -78,6 +79,15 @@ create table if not exists DIRECTORS
     primary key (DIRECTOR_ID)
 );
 
-
-insert into USERS(NAME, EMAIL, LOGIN, BIRTHDAY) values ( 'vasya', '123@mail.ru','123','1990-01-01' );
-select * from USERS
+--Создание таблицы связей фильмов с режиссерами
+create table IF NOT EXISTS FILM_DIRECTORS
+(
+    FILM_ID  INTEGER,
+    DIRECTOR_ID INTEGER,
+    constraint FILM_DIRECTORS_PK
+    primary key (FILM_ID, DIRECTOR_ID),
+    constraint FILM_DIRECTORS_FILMS_ID_FK
+    foreign key (FILM_ID) references FILMS,
+    constraint FILM_DIRECTORS_DIRECTORS_ID_FK
+    foreign key (DIRECTOR_ID) references DIRECTORS
+);

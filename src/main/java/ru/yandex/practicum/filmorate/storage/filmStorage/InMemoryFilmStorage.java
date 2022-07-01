@@ -70,5 +70,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
-
+    @Override
+    public List<Film> getfindByDirector(int directorId) {
+        throw new UnsupportedOperationException("NotImplemented Method!");
+    }
 }

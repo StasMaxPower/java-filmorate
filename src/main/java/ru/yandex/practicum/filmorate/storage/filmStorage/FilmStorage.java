@@ -21,4 +21,6 @@ public interface FilmStorage {
     public Film getToId(int id);
 
     public Film checkFilmId(int id);
+
+    public List<Film> getfindByDirector(int directorId);
 }
