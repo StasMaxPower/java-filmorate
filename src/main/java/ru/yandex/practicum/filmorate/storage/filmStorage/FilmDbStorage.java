@@ -38,26 +38,24 @@ public class FilmDbStorage implements FilmStorage {
         String param1 = "";
         String param2 = "";
         if (by.contains("title")&&by.size()==1){
-            param1 ="'%" + query.toLowerCase() + "%'";
-            param2 = "'%'";
-        }
-        if (by.contains("title")&&by.contains("director")&&by.size()==2){
-            param1 = "'" + query.toLowerCase() + "'";
-            param2 = "'" + query.toLowerCase() + "'";
-        }
-        if (by.contains("director")&&by.size()==1){
-            param1 = "'%'";
-            param2 = "'" + query.toLowerCase() + "'";
+            param1 = "%" + query.toLowerCase() + "%";
+            param2 = "%";
+        }else if (by.contains("title")&&by.contains("director")&&by.size()==2){
+            param1 = "%" + query.toLowerCase() + "%";
+            param2 = "%" + query.toLowerCase() + "%";
+
+        }else if (by.contains("director")&&by.size()==1){
+            param1 = "%";
+            param2 = "%" + query.toLowerCase() + "%";
         }
 
         String sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
-                " f.rating, count(l.user_id) as count_films " +
-                " from films f left join likes l on f.film_id = l.film_id " +
+                " f.rating " +
+                " from films f " +
                 " left join FILM_DIRECTORS on f.FILM_ID = FILM_DIRECTORS.FILM_ID " +
                 " left join DIRECTORS on FILM_DIRECTORS.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID "+
-                " where LOWER(f.name) LIKE ? and Lower(directors.name) LIKE ?  " +
-                " group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
-                " order by count_films desc ";
+                " where LOWER(f.name) LIKE  ?  and Lower(directors.name) LIKE ?  ";
+
         return  jdbcTemplate.query(sql, (rs, rowNum) -> new Film(
                 rs.getInt("film_id"),
                 rs.getString("name"),
