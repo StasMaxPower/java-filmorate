@@ -29,8 +29,8 @@ public class FilmController {
         return filmService.getCommonFilms(userId, friendId);
     }
 
-    @GetMapping("/fimls/search")
-    public List<Film> getFimsBySearch(@RequestParam String query, @RequestParam List<String> by){
+    @GetMapping("/films/search")
+    public List<Film> getFilmsBySearch(@RequestParam String query, @RequestParam List<String> by){
         return filmService.getFimsBySearch(query, by);
     }
     @GetMapping(value = {"/films/popular"})

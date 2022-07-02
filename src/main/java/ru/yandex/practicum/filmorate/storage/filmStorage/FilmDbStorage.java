@@ -41,26 +41,35 @@ public class FilmDbStorage implements FilmStorage {
         String param1 = "";
         String param2 = "";
         if (by.contains("title")&&by.size()==1){
-            param1 = query;
-            param2 = "%";
+            param1 ="'%" + query + "%'";
+            param2 = "'%'";
         }
         if (by.contains("title")&&by.contains("director")&&by.size()==2){
-            param1 = query;
-            param2 = query;
+            param1 = "'" + query + "'";
+            param2 = "'" + query + "'";
         }
         if (by.contains("director")&&by.size()==1){
-            param1 = "%";
-            param2 = query;
+            param1 = "'%'";
+            param2 = "'" + query + "'";
         }
 
         String sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
                     " f.rating, count(l.user_id) as count_films " +
                     " from films f left join likes l on f.film_id = l.film_id " +
-                    " where name LIKE '%?%' " +
-               //     " and director_id=directors.director_id and directors.name = ? "+
+                    " left join FILM_DIRECTORS on f.FILM_ID = FILM_DIRECTORS.FILM_ID " +
+                    " left join DIRECTORS on FILM_DIRECTORS.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID "+
+                    " where f.name LIKE ? and directors.name LIKE ?  " +
                     " group by f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating " +
                     " order by count_films desc ";
-        return  jdbcTemplate.query(sql, this::mapRowToFilm,query);
+        return  jdbcTemplate.query(sql, (rs, rowNum) -> new Film(
+                rs.getInt("film_id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("releaseDate").toLocalDate(),
+                rs.getInt("duration"),
+                mpaStorage.getMpaToId(rs.getInt("rating")),
+                genreStorage.getGenres(rs.getInt("film_id")),
+                directorStorage.getDirectors(rs.getInt("film_id"))),param1, param2);
     }
     @Override
     public List<Film>  getCommon(int userId,int friendId){

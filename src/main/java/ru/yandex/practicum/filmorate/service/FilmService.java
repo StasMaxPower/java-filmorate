@@ -38,12 +38,13 @@ public class FilmService {
         return filmStorage.getCommon(userId, friendId);
     }
 
-    public List<Film> getPopularFilms(int count, int genreId, int year){
+
     public List <Film> getFimsBySearch(String query, List<String> by){
+        log.info("Запрос на поиск фильмов получен");
         return filmStorage.getBySearch(query, by);
     }
 
-    public List<Film> getPopularFilms(int count){
+    public List<Film> getPopularFilms(int count, int genreId, int year){
         log.info("Запрос на вывод популярных фильмов получен.");
         return filmStorage.getPopular(count, genreId, year);
     }
