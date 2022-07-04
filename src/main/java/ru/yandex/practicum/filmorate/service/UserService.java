@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.filmStorage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.likesStorage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
 import java.time.LocalDate;
 import java.util.*;
@@ -15,11 +18,17 @@ import java.util.*;
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final LikesStorage likesStorage;
+    private final FilmStorage filmStorage;
     private int userId;
 
     @Autowired
-    public UserService(@Qualifier("userDbStorage")UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage,
+                       LikesStorage likesStorage,
+                       @Qualifier("filmDbStorage") FilmStorage filmStorage) {
         this.userStorage = userStorage;
+        this.likesStorage = likesStorage;
+        this.filmStorage = filmStorage;
         userId = 0;
     }
 
@@ -65,6 +74,12 @@ public class UserService {
         return userStorage.update(user);
     }
 
+    public void deleteUser(int id) {
+        log.info("Delete request received");
+        userStorage.deleteUser(id);
+    }
+
+
     public void checkUser(User user){
         if (user.getLogin().isBlank()) {
             log.info("Логин пользователя не задан");
@@ -80,5 +95,44 @@ public class UserService {
         }
         if (user.getName().isEmpty())
             user.setName(user.getLogin());
+    }
+
+    public List<Film> getRecommendationsForUserById(int id) {
+        log.info("Запрос на вывод рекоммендаций для пользователя по ID получен.");
+
+        //получаем данные по всем лайкам
+        Map<Integer, Map<Integer, Boolean>> data = likesStorage.getAllFilmsLikes(); //userId, filmId, isLike
+
+        //считаем совпадения
+        Map<Integer, Integer> count = new HashMap<>();
+        if (data.containsKey(id)) { //есть ли наш пользователь в таблице, иначе совпадени нет
+            for (Integer i : data.keySet()) {
+                if (id != i) { //не ведем подсчет по нашему пользователю
+                    for (Integer j : data.get(i).keySet()) {
+                        if (data.get(id).containsKey(j))
+                            count.put(i, count.getOrDefault(i, 0) + 1);
+                    }
+                }
+            }
+            //находим максимальное кол-во пересечений
+            int max = 0;
+            for (Integer i : count.values()) {
+                if (max < i) max = i;
+            }
+            //идем по списку пользователей с которыми было максимальное пересечение
+            Set<Film> filmsWithoutLike = new HashSet<>();
+            for (Integer i : count.keySet()) {
+                if (count.get(i) == max) {
+                    //и формируем список фильмов, где наш юзер не поставил лайк
+                    Map<Integer, Boolean> filmsWithLikeUser = data.get(id);
+                    Map<Integer, Boolean> filmsWithLikeFriend = data.get(i);
+                    for (Integer filmId : filmsWithLikeFriend.keySet()) {
+                        if (!filmsWithLikeUser.containsKey(filmId)) filmsWithoutLike.add(filmStorage.getToId(filmId));
+                    }
+                }
+            }
+            return new ArrayList<>(filmsWithoutLike);
+        }
+        return new ArrayList<>();
     }
 }

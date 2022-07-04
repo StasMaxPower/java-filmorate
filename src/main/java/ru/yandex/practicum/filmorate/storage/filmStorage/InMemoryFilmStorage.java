@@ -23,8 +23,18 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopular(int count) {
+    public List<Film> getBySearch(String query, List<String> by) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Film> getPopular(int count, int genreId, int year) {
         return null;
+    }
+
+    @Override
+    public List<Film> getCommon(int userId, int friendId) {
+        throw new UnsupportedOperationException();
     }
 
     //@Override
@@ -62,6 +72,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public void deleteFilm(int id){
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    @Override
     public Film checkFilmId(int id){
         if (!films.containsKey(id)){
             log.info("Фильм не найден");
@@ -70,5 +85,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
-
+    @Override
+    public List<Film> getfindByDirector(int directorId) {
+        throw new UnsupportedOperationException("NotImplemented Method!");
+    }
 }
