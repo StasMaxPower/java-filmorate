@@ -34,6 +34,46 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> getBySearch(String query, List<String> by){
+        String param1 = "";
+        String param2 = "";
+        String param3 = "";
+        if (by.contains("title")&&by.size()==1){
+            param1 = "%" + query.toLowerCase() + "%";
+            param2 = "LOWER(f.name) LIKE ? and  (LOWER(directors.name) LIKE ? or directors.name is null)";
+            param3 = "%";
+        }else if (by.contains("title")&&by.contains("director")&&by.size()==2){
+            param1 = "%" + query.toLowerCase() + "%";
+            param2 = "LOWER(f.name) LIKE ? or LOWER(directors.name) LIKE ?";
+            param3 = "%" + query.toLowerCase() + "%";
+
+        }else if (by.contains("director")&&by.size()==1){
+            param1 = "%";
+            param2 = "(LOWER(f.name) LIKE ? or f.name is null)  and  LOWER(directors.name) LIKE ? ";
+            param3 = "%" + query.toLowerCase() + "%";
+        }
+
+        String sql = "select f.film_id, f.name, f.description, f.duration, f.releasedate, " +
+                " f.rating " +
+                " from films f " +
+                " left join FILM_DIRECTORS on f.FILM_ID = FILM_DIRECTORS.FILM_ID " +
+                " left join DIRECTORS on FILM_DIRECTORS.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID "+
+                " where " + param2;
+
+        List<Film> result =  jdbcTemplate.query(sql, (rs, rowNum) -> new Film(
+                rs.getInt("film_id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("releaseDate").toLocalDate(),
+                rs.getInt("duration"),
+                mpaStorage.getMpaToId(rs.getInt("rating")),
+                genreStorage.getGenres(rs.getInt("film_id")),
+                directorStorage.getDirectors(rs.getInt("film_id"))),param1, param3);
+         result.sort(Comparator.comparingInt(Film::getId).reversed());
+         return result;
+    }
+
+    @Override
     public List<Film>  getCommon(int userId,int friendId){
         String sql = "SELECT f.film_id, f.name, f.description, f.duration, f.releasedate, f.rating, count(l.user_id) AS count_films " +
                 "FROM films AS f " +

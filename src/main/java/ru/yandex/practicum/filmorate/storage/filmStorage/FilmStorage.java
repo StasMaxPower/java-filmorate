@@ -8,6 +8,8 @@ import java.util.List;
 public interface FilmStorage {
 
 
+    public List<Film> getBySearch(String query, List<String> by);
+
     //public Film addLike( int filmId,  int userId);
     public List<Film> getPopular(int count, int genreId, int year);
     //public Film deleteLike(int id, int filmId);

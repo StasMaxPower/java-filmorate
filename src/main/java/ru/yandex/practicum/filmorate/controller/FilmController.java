@@ -22,6 +22,11 @@ public class FilmController {
         this.filmService = filmService;
     }
 
+    @GetMapping("/films/search")
+    public List<Film> getFilmsBySearch(@RequestParam String query, @RequestParam List<String> by){
+        return filmService.getFimsBySearch(query, by);
+    }
+
     @GetMapping("/films/common")
     public List<Film> getCommonFilms(@RequestParam  int userId,
                                       @RequestParam int friendId) {

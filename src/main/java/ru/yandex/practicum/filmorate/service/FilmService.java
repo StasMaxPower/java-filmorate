@@ -33,6 +33,11 @@ public class FilmService {
         filmId = 0;
     }
 
+    public List <Film> getFimsBySearch(String query, List<String> by){
+        log.info("Запрос на поиск фильмов получен");
+        return filmStorage.getBySearch(query, by);
+    }
+
     public List<Film>  getCommonFilms(int userId,int friendId){
         log.info("Запрос на вывод общих фильмов пользователей с ID {} и {} получен.", userId, friendId);
         return filmStorage.getCommon(userId, friendId);
