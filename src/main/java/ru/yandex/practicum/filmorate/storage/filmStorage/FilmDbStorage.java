@@ -8,8 +8,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.directorStorage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.genrestorage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpaStorage.MpaStorage;
 
@@ -18,15 +20,17 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class FilmDbStorage implements FilmStorage{
+public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreStorage genreStorage;
     private final MpaStorage mpaStorage;
+    private final DirectorStorage directorStorage;
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreStorage genreStorage, MpaStorage mpaStorage) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreStorage genreStorage, MpaStorage mpaStorage, DirectorStorage directorStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreStorage = genreStorage;
         this.mpaStorage = mpaStorage;
+        this.directorStorage = directorStorage;
     }
 
     @Override
@@ -45,7 +49,8 @@ public class FilmDbStorage implements FilmStorage{
                         rs.getDate("releaseDate").toLocalDate(),
                         rs.getInt("duration"),
                         mpaStorage.getMpaToId(rs.getInt("rating")),
-                        genreStorage.getGenres(rs.getInt("film_id"))),
+                        genreStorage.getGenres(rs.getInt("film_id")),
+                        directorStorage.getDirectors(rs.getInt("film_id"))),
                 userId, friendId);
     }
 
@@ -76,9 +81,29 @@ public class FilmDbStorage implements FilmStorage{
                 rs.getDate("releaseDate").toLocalDate(),
                 rs.getInt("duration"),
                 mpaStorage.getMpaToId(rs.getInt("rating")),
-                genreStorage.getGenres(rs.getInt("film_id"))),
+                genreStorage.getGenres(rs.getInt("film_id")),
+                directorStorage.getDirectors(rs.getInt("film_id"))),
                 year, genreId, count);
     }
+
+    @Override
+    public List<Film> getfindByDirector(int directorId) {
+        String sql = "SELECT * FROM FILMS F " +
+                "JOIN FILM_DIRECTORS FD ON FD.FILM_ID = F.FILM_ID " +
+                "WHERE FD.DIRECTOR_ID = ? ";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> (new Film(
+                rs.getInt("film_id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("releaseDate").toLocalDate(),
+                rs.getInt("duration"),
+                mpaStorage.getMpaToId(rs.getInt("rating")),
+                genreStorage.getGenres(rs.getInt("film_id")),
+                directorStorage.getDirectors(rs.getInt("film_id")))), directorId
+        );
+    }
+
+    ;
 
     @Override
     public Collection<Film> getAll() {
@@ -90,7 +115,8 @@ public class FilmDbStorage implements FilmStorage{
                 rs.getDate("releaseDate").toLocalDate(),
                 rs.getInt("duration"),
                 mpaStorage.getMpaToId(rs.getInt("rating")),
-                genreStorage.getGenres(rs.getInt("film_id"))
+                genreStorage.getGenres(rs.getInt("film_id")),
+                directorStorage.getDirectors(rs.getInt("film_id"))
         ));
     }
 
@@ -107,11 +133,18 @@ public class FilmDbStorage implements FilmStorage{
         Number num = jdbcInsert.executeAndReturnKey(parameters);
         film.setId(num.intValue());
 
-        if (film.getGenres()!= null){
+        if (film.getGenres() != null) {
             String sql = "insert into FILMS_GENRE(FILM_ID, GENRE_ID) " +
                     "values ( ?,? )";
             for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update(sql, film.getId(), genre.getId());
+            }
+        }
+        if (film.getDirectors() != null) {
+            String sql = "insert into FILM_DIRECTORS(FILM_ID, DIRECTOR_ID) " +
+                    "values ( ?,? )";
+            for (Director director : film.getDirectors()) {
+                jdbcTemplate.update(sql, film.getId(), director.getId());
             }
         }
         log.info("Добавлен фильм: {}", film.getName());
@@ -131,7 +164,8 @@ public class FilmDbStorage implements FilmStorage{
                 film.getMpa().getId(),
                 film.getId()
         );
-            genreStorage.updateFilmGenre(film);
+        genreStorage.updateFilmGenre(film);
+        directorStorage.updateFilmDirector(film);
         log.info("Обновлен фильм: {}", film.getName());
         return getToId(film.getId());
     }
@@ -141,14 +175,15 @@ public class FilmDbStorage implements FilmStorage{
     public Film getToId(int id) {
         checkFilmId(id);
         String sqlQuery = "select * from films where film_ID = ?";
-        Film film = jdbcTemplate.queryForObject(sqlQuery,(rs, rowNum) ->(new Film(
+        Film film = jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> (new Film(
                 rs.getInt("film_id"),
                 rs.getString("name"),
                 rs.getString("description"),
                 rs.getDate("releasedate").toLocalDate(),
                 rs.getInt("duration"),
                 mpaStorage.getMpaToId(rs.getInt("rating")),
-                genreStorage.getGenres(rs.getInt("film_id")))), id);
+                genreStorage.getGenres(rs.getInt("film_id")),
+                directorStorage.getDirectors(rs.getInt("film_id")))), id);
         log.info("Вывод фильма: {}", film.getName());
         return film;
     }

@@ -25,4 +25,6 @@ public interface FilmStorage {
     public Film checkFilmId(int id);
 
     void deleteFilm(int id);
+
+    public List<Film> getfindByDirector(int directorId);
 }

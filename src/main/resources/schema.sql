@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE;
+DROP TABLE IF EXISTS DIRECTORS, FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE, FILM_DIRECTORS;
 
 create table if not exists USERS
 (
@@ -69,4 +69,26 @@ create table if not exists RATING
     NAME      CHARACTER VARYING(30) not null,
     constraint RATING_PK
         primary key (RATING_ID)
+);
+
+--Создание таблицы режиссеров
+create table if not exists DIRECTORS
+(
+    DIRECTOR_ID INTEGER auto_increment,
+    NAME CHARACTER VARYING(30) not null,
+    constraint DIRECTOR_PK
+    primary key (DIRECTOR_ID)
+);
+
+--Создание таблицы связей фильмов с режиссерами
+create table IF NOT EXISTS FILM_DIRECTORS
+(
+    FILM_ID  INTEGER,
+    DIRECTOR_ID INTEGER,
+    constraint FILM_DIRECTORS_PK
+    primary key (FILM_ID, DIRECTOR_ID),
+    constraint FILM_DIRECTORS_FILMS_ID_FK
+    foreign key (FILM_ID) references FILMS,
+    constraint FILM_DIRECTORS_DIRECTORS_ID_FK
+    foreign key (DIRECTOR_ID) references DIRECTORS
 );
