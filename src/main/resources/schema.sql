@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE;
+DROP TABLE IF EXISTS FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE cascade;
 
 create table if not exists USERS
 (
@@ -70,6 +70,21 @@ create table if not exists RATING
         primary key (RATING_ID)
 );
 
+create table if not exists REVIEWS
+(
+    REVIEW_ID     INTEGER                auto_increment,
+    CONTENT       TEXT                   not null,
+    IS_POSITIVE    BOOLEAN,
+    USER_ID       INTEGER                not null,
+    FILM_ID       INTEGER                not null,
+    USEFUL        INTEGER,
+    constraint REVIEWS_FILMS_FILM_ID_FK
+        foreign key (FILM_ID) references FILMS (FILM_ID),
+    constraint REVIEWS_USERS_USER_ID_FK
+        foreign key (USER_ID) references USERS (USER_ID)
+);
+
 
 insert into USERS(NAME, EMAIL, LOGIN, BIRTHDAY) values ( 'vasya', '123@mail.ru','123','1990-01-01' );
+insert into FILMS(name, description, duration, releasedate) VALUES ('Матрица' , 'война людей и машин','120','2000-03-28');
 select * from USERS

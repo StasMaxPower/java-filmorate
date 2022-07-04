@@ -29,6 +29,7 @@ public class Film {
     private Mpa mpa;
     private Set<Integer> likes;
     private List<Genre> genres;
+
     public Film(int id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa, List<Genre> genres) {
         this.id = id;
         this.name = name;
