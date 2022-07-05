@@ -7,6 +7,7 @@ delete  from USERS;
 delete  from FILMS;
 delete  from GENRE;
 delete  from RATING;
+delete from REVIEWS;
 
 
 

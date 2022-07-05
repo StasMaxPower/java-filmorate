@@ -3,25 +3,26 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Map;
-import java.util.Set;
 
 @Getter
 @Setter
+
 public class Review {
-    private int id;
-    @NotNull
+    private int reviewId;
+    @NotBlank
     private String content;
-    private boolean isPositive;
     @NotNull
-    private int userId;
+    private Boolean isPositive;
     @NotNull
-    private int filmId;
+    private Integer userId;
+    @NotNull
+    private Integer filmId;
     int useful;
 
-    public Review(int id, String content, boolean isPositive, int userId, int filmId, int useful) {
-        this.id = id;
+    public Review(int id, String content, Boolean isPositive, Integer userId, Integer filmId, int useful) {
+        this.reviewId = id;
         this.content = content;
         this.isPositive = isPositive;
         this.userId = userId;

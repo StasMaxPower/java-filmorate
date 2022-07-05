@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.reviewStorage;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -9,6 +10,10 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.filmStorage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.userStorage.UserDbStorage;
+
+import java.util.List;
 
 @Slf4j
 @Component
@@ -16,7 +21,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public ReviewDbStorage(JdbcTemplate jdbcTemplate) {
+    public ReviewDbStorage(JdbcTemplate jdbcTemplate, @Qualifier("filmDbStorage") FilmStorage filmStorage, UserDbStorage userStorage) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -26,42 +31,122 @@ public class ReviewDbStorage implements ReviewStorage {
         jdbcInsert.withTableName("reviews").usingGeneratedKeyColumns("review_id");
         SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("content", review.getContent())
-                .addValue("is_positive", review.isPositive())
+                .addValue("is_positive", review.getIsPositive())
                 .addValue("filmId", review.getFilmId())
                 .addValue("userId", review.getUserId())
                 .addValue("useful", 0);
         Number num = jdbcInsert.executeAndReturnKey(parameters);
-        review.setId(num.intValue());
-
-        log.info("Добавлен отзыв: {}", review.getId());
+        review.setReviewId(num.intValue());
+        log.info("Добавлен отзыв: {}", review.getReviewId());
         return review;
     }
 
+    @Override
+    public Review updateReview(Review review) {
+        String sql = " update REVIEWS SET CONTENT = ?, IS_POSITIVE = ? where REVIEW_ID = ?";
+        jdbcTemplate.update(sql,
+                review.getContent(),
+                review.getIsPositive(),
+                review.getReviewId()
+        );
+        log.info("Обновлен отзыв: {}", review.getReviewId());
+        return getToId(review.getReviewId());
+    }
+
+    @Override
+    public Review getReviewById(int id) {
+        String sql = "SELECT * FROM REVIEWS WHERE REVIEW_ID = ?";
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Review(
+                rs.getInt("review_id"),
+                rs.getString("content"),
+                rs.getBoolean("is_positive"),
+                rs.getInt("user_id"),
+                rs.getInt("film_id"),
+                rs.getInt("useful")), id);
+    }
+
+    @Override
+    public List<Review> getReviewByFilmId(int filmId, int count) {
+        String sqlQuery = "select * from reviews where FILM_ID = ? ORDER BY USEFUL DESC limit ?";
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (new Review(
+                rs.getInt("review_id"),
+                rs.getString("content"),
+                rs.getBoolean("is_positive"),
+                rs.getInt("user_id"),
+                rs.getInt("film_id"),
+                rs.getInt("useful"))), filmId, count);
+    }
+
+    @Override
+    public void addLikeToReview(Integer id, Integer userId) {
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+        jdbcInsert.withTableName("review_likes").usingGeneratedKeyColumns("REVIEW_ID, USER_ID");
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("reviewId", id)
+                .addValue("userId", userId)
+                .addValue("isLike", true);
+        jdbcInsert.execute(parameters);
+        String sql = "update REVIEWS SET USEFUL = USEFUL+1 where REVIEW_ID = ?";
+        jdbcTemplate.update(sql, id);
+        log.info("Добавлен лайк: {}", getReviewById(id).getReviewId());
+    }
+
+    @Override
+    public void addDislikeToReview(Integer id, Integer userId) {
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+        jdbcInsert.withTableName("review_likes").usingGeneratedKeyColumns("REVIEW_ID, USER_ID");
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("reviewId", id)
+                .addValue("userId", userId)
+                .addValue("isLike", false);
+        jdbcInsert.execute(parameters);
+        String sql = "update REVIEWS SET USEFUL = USEFUL-1 where REVIEW_ID = ?";
+        jdbcTemplate.update(sql, id);
+        log.info("Добавлен лайк: {}", getReviewById(id).getReviewId());
+    }
+    @Override
+    public void deleteLikeToReview(Integer id, Integer userId) {
+        String sql = "delete FROM review_likes where review_id = ? user_id = ?;" +
+                "update REVIEWS SET USEFUL = USEFUL-1 where REVIEW_ID = ?;";
+        jdbcTemplate.update(sql, id, userId, id);
+        log.info("Удален  лайк: {}", getReviewById(id).getReviewId());
+    }
+
+    @Override
+    public void deleteDislikeToReview(Integer id, Integer userId) {
+        String sql = "delete FROM review_likes where review_id = ? user_id = ?;" +
+                "update REVIEWS SET USEFUL = USEFUL+1 where REVIEW_ID = ?;";
+        jdbcTemplate.update(sql, id, userId, id);
+        log.info("Удален  дизлайк: {}", getReviewById(id).getReviewId());
+    }
+
+    @Override
+    public List<Review> getAllReviews(int count) {
+        String sqlQuery = "select * from reviews  ORDER BY USEFUL DESC limit ?";
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (new Review(
+                rs.getInt("review_id"),
+                rs.getString("content"),
+                rs.getBoolean("is_positive"),
+                rs.getInt("film_id"),
+                rs.getInt("user_id"),
+                rs.getInt("useful"))), count);
+    }
 
 
     @Override
-    public Review updateReview(Review review) {
-        checkReviewId(review.getId());
-        String sql = " update REVIEWS SET CONTENT = ?, IS_POSITIVE = ?, FILM_ID = ?, USER_ID = ?," +
-                " USEFUL = ? where REVIEW_ID = ?";
-        jdbcTemplate.update(sql,
-                review.getContent(),
-                review.isPositive(),
-                review.getFilmId(),
-                review.getUserId(),
-                review.getUseful(),
-                review.getId()
-        );
-
-        log.info("Обновлен отзыв: {}", review.getId());
-        return getToId(review.getId());
+    public void deleteReview(int id) {
+        String sql = "delete FROM reviews where review_id = ?";
+        jdbcTemplate.update(sql, id);
+        log.info("Удален отзыв: {}", id);
     }
+
+
 
     @Override
     public Review getToId(int id) {
         checkReviewId(id);
         String sqlQuery = "select * from reviews where REVIEW_ID = ?";
-        Review review = jdbcTemplate.queryForObject(sqlQuery,(rs, rowNum) ->(new Review(
+        Review review = jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> (new Review(
                 rs.getInt("review_id"),
                 rs.getString("content"),
                 rs.getBoolean("is_positive"),
@@ -80,24 +165,5 @@ public class ReviewDbStorage implements ReviewStorage {
         if (!rows.next()) throw new NotFoundException("Нет отзыва с таким ID");
         return null;
     }
-
-
-
-    @Override
-    public void deleteReview(int id) {
-            checkReviewId(id);
-            String sqlQuery = "DELETE * from reviews where REVIEW_ID = ?";
-            Review review = jdbcTemplate.queryForObject(sqlQuery,(rs, rowNum) ->(new Review(
-                    rs.getInt("review_id"),
-                    rs.getString("content"),
-                    rs.getBoolean("is_positive"),
-                    rs.getInt("film_id"),
-                    rs.getInt("user_id"),
-                    rs.getInt("useful"))), id);
-
-
-
-    }
-
 
 }
