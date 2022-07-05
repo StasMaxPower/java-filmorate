@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS DIRECTORS, FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE, FILM_DIRECTORS;
+DROP TABLE IF EXISTS DIRECTORS, FILMS, USERS, FRIENDS, LIKES, RATING, GENRE, FILMS_GENRE, FILM_DIRECTORS, REVIEWS, REVIEW_LIKES ;
 
 create table if not exists USERS
 (
@@ -69,6 +69,35 @@ create table if not exists RATING
     NAME      CHARACTER VARYING(30) not null,
     constraint RATING_PK
         primary key (RATING_ID)
+);
+
+create table if not exists REVIEWS
+(
+    REVIEW_ID     INTEGER                auto_increment,
+    CONTENT       TEXT                   not null,
+    IS_POSITIVE    BOOLEAN,
+    USER_ID       INTEGER                not null,
+    FILM_ID       INTEGER                not null,
+    USEFUL        INTEGER,
+    constraint REVIEWS_PK
+    primary key(REVIEW_ID),
+        constraint REVIEWS_FILMS_FILM_ID_FK
+        foreign key (FILM_ID) references FILMS (FILM_ID) ON DELETE CASCADE,
+    constraint REVIEWS_USERS_USER_ID_FK
+        foreign key (USER_ID) references USERS (USER_ID)
+);
+
+create table if not exists REVIEW_LIKES
+(
+    REVIEW_ID INTEGER ,
+    USER_ID INTEGER ,
+    IS_LIKE BOOLEAN,
+    constraint REVIEW_LIKES_PK
+        primary key (REVIEW_ID, USER_ID),
+    constraint REVIEW_LIKES_REVIEWS_REVIEW_ID_FK
+        foreign key (REVIEW_ID) references REVIEWS (REVIEW_ID) ON DELETE CASCADE,
+    constraint REVIEW_LIKES_USERS_USER_ID_FK
+        foreign key (USER_ID) references USERS (USER_ID)
 );
 
 --Создание таблицы режиссеров
