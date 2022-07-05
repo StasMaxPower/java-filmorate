@@ -74,4 +74,14 @@ public class ReviewService {
     public void addDislikeToReview(Integer id, Integer userId) {
         reviewStorage.addDislikeToReview(id, userId);
     }
+
+    public void deleteLikeToReview(Integer id, Integer userId) {
+        reviewStorage.checkUserHasLike(id, userId);
+        reviewStorage.deleteLikeToReview(id, userId);
+    }
+
+    public void deleteDislikeToReview(Integer id, Integer userId) {
+        reviewStorage.checkUserHasDislike(id, userId);
+        reviewStorage.deleteDislikeToReview(id, userId);
+    }
 }

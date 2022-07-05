@@ -26,4 +26,8 @@ public interface ReviewStorage {
     void addLikeToReview(Integer id, Integer userId);
 
     void addDislikeToReview(Integer id, Integer userId);
+
+    void checkUserHasLike(int id, int userId);
+
+    void checkUserHasDislike(int id, int userId);
 }

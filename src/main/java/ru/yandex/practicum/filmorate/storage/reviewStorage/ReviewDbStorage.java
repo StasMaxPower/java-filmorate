@@ -104,6 +104,19 @@ public class ReviewDbStorage implements ReviewStorage {
         jdbcTemplate.update(sql, id);
         log.info("Добавлен лайк: {}", getReviewById(id).getReviewId());
     }
+
+    @Override
+    public void checkUserHasLike(int id, int userId) {
+        SqlRowSet rows = jdbcTemplate.queryForRowSet("select * from REVIEW_LIKES where REVIEW_ID = ? USER_ID = ? IS_LIKE = true", id);
+        if (!rows.next()) throw new NotFoundException("Пользователь не ставил лайк данному отзыву");
+    }
+
+    @Override
+    public void checkUserHasDislike(int id, int userId) {
+        SqlRowSet rows = jdbcTemplate.queryForRowSet("select * from REVIEW_LIKES where REVIEW_ID = ? USER_ID = ? IS_LIKE = false", id);
+        if (!rows.next()) throw new NotFoundException("Пользователь не ставил дизлайк данному отзыву");
+    }
+
     @Override
     public void deleteLikeToReview(Integer id, Integer userId) {
         String sql = "delete FROM review_likes where review_id = ? user_id = ?;" +
