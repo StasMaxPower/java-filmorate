@@ -9,7 +9,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.feedStorage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.filmStorage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.UserDbStorage;
 
@@ -20,9 +23,14 @@ import java.util.List;
 public class ReviewDbStorage implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final FeedStorage feedStorage;
 
-    public ReviewDbStorage(JdbcTemplate jdbcTemplate, @Qualifier("filmDbStorage") FilmStorage filmStorage, UserDbStorage userStorage) {
+    public ReviewDbStorage(JdbcTemplate jdbcTemplate,
+                           @Qualifier("filmDbStorage") FilmStorage filmStorage,
+                           UserDbStorage userStorage,
+                           FeedStorage feedStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.feedStorage = feedStorage;
     }
 
     @Override
@@ -37,7 +45,13 @@ public class ReviewDbStorage implements ReviewStorage {
                 .addValue("useful", 0);
         Number num = jdbcInsert.executeAndReturnKey(parameters);
         review.setReviewId(num.intValue());
+
+        feedStorage.addEventFeed(review.getUserId(),
+                review.getReviewId(),
+                EventType.REVIEW,
+                Operation.ADD);
         log.info("Добавлен отзыв: {}", review.getReviewId());
+
         return review;
     }
 
@@ -49,7 +63,15 @@ public class ReviewDbStorage implements ReviewStorage {
                 review.getIsPositive(),
                 review.getReviewId()
         );
+
+        Review reviewUpdated = getReviewById(review.getReviewId());
+
+        feedStorage.addEventFeed(reviewUpdated.getUserId(),
+                reviewUpdated.getReviewId(),
+                EventType.REVIEW,
+                Operation.UPDATE);
         log.info("Обновлен отзыв: {}", review.getReviewId());
+
         return getToId(review.getReviewId());
     }
 
@@ -107,19 +129,28 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public void checkUserHasLike(int id, int userId) {
-        SqlRowSet rows = jdbcTemplate.queryForRowSet("select * from REVIEW_LIKES where REVIEW_ID = ? USER_ID = ? IS_LIKE = true", id);
+        SqlRowSet rows = jdbcTemplate.queryForRowSet("select * " +
+                "from REVIEW_LIKES " +
+                "where REVIEW_ID = ? " +
+                "   and USER_ID = ? " +
+                "   and IS_LIKE = true", id, userId);
         if (!rows.next()) throw new NotFoundException("Пользователь не ставил лайк данному отзыву");
     }
 
     @Override
     public void checkUserHasDislike(int id, int userId) {
-        SqlRowSet rows = jdbcTemplate.queryForRowSet("select * from REVIEW_LIKES where REVIEW_ID = ? USER_ID = ? IS_LIKE = false", id);
+        SqlRowSet rows = jdbcTemplate.queryForRowSet("select * " +
+                "from REVIEW_LIKES " +
+                "where REVIEW_ID = ? " +
+                "   and USER_ID = ? " +
+                "   and IS_LIKE = false", id, userId);
         if (!rows.next()) throw new NotFoundException("Пользователь не ставил дизлайк данному отзыву");
     }
 
     @Override
     public void deleteLikeToReview(Integer id, Integer userId) {
-        String sql = "delete FROM review_likes where review_id = ? user_id = ?;" +
+        String sql = "delete FROM review_likes " +
+                "where review_id = ? and user_id = ?;" +
                 "update REVIEWS SET USEFUL = USEFUL-1 where REVIEW_ID = ?;";
         jdbcTemplate.update(sql, id, userId, id);
         log.info("Удален  лайк: {}", getReviewById(id).getReviewId());
@@ -127,7 +158,9 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public void deleteDislikeToReview(Integer id, Integer userId) {
-        String sql = "delete FROM review_likes where review_id = ? user_id = ?;" +
+        String sql = "delete FROM review_likes " +
+                "where review_id = ? " +
+                "   and user_id = ?;" +
                 "update REVIEWS SET USEFUL = USEFUL+1 where REVIEW_ID = ?;";
         jdbcTemplate.update(sql, id, userId, id);
         log.info("Удален  дизлайк: {}", getReviewById(id).getReviewId());
@@ -140,20 +173,26 @@ public class ReviewDbStorage implements ReviewStorage {
                 rs.getInt("review_id"),
                 rs.getString("content"),
                 rs.getBoolean("is_positive"),
-                rs.getInt("film_id"),
                 rs.getInt("user_id"),
+                rs.getInt("film_id"),
                 rs.getInt("useful"))), count);
     }
 
 
     @Override
     public void deleteReview(int id) {
+        Review review = getReviewById(id);
+
         String sql = "delete FROM reviews where review_id = ?";
         jdbcTemplate.update(sql, id);
+
+        feedStorage.addEventFeed(review.getUserId(),
+                review.getReviewId(),
+                EventType.REVIEW,
+                Operation.REMOVE);
+
         log.info("Удален отзыв: {}", id);
     }
-
-
 
     @Override
     public Review getToId(int id) {

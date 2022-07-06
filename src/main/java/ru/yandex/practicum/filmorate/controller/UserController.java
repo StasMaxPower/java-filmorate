@@ -1,17 +1,15 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -70,5 +68,10 @@ public class UserController {
     @GetMapping("/users/{id}/recommendations")
     public List<Film> getRecommendationsForUserById(@PathVariable int id) {
         return userService.getRecommendationsForUserById(id);
+    }
+
+    @GetMapping("/users/{id}/feed")
+    public List<Feed> getEventFeed(@PathVariable int id){
+        return userService.getEventFeed(id);
     }
 }
