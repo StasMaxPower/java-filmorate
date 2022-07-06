@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.feedStorage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.filmStorage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likesStorage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
@@ -20,15 +22,18 @@ public class UserService {
     private final UserStorage userStorage;
     private final LikesStorage likesStorage;
     private final FilmStorage filmStorage;
+    private final FeedStorage feedStorage;
     private int userId;
 
     @Autowired
     public UserService(@Qualifier("userDbStorage") UserStorage userStorage,
                        LikesStorage likesStorage,
-                       @Qualifier("filmDbStorage") FilmStorage filmStorage) {
+                       @Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       FeedStorage feedStorage) {
         this.userStorage = userStorage;
         this.likesStorage = likesStorage;
         this.filmStorage = filmStorage;
+        this.feedStorage = feedStorage;
         userId = 0;
     }
 
@@ -79,6 +84,10 @@ public class UserService {
         userStorage.deleteUser(id);
     }
 
+    public List<Feed> getEventFeed(int id) {
+        log.info("Event feed request received");
+        return feedStorage.getEventFeed(id);
+    }
 
     public void checkUser(User user){
         if (user.getLogin().isBlank()) {

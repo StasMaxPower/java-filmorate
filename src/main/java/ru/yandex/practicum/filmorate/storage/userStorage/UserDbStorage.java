@@ -8,7 +8,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.feedStorage.FeedStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,9 +24,12 @@ import java.util.List;
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final FeedStorage feedStorage;
 
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
+
+    public UserDbStorage(JdbcTemplate jdbcTemplate, FeedStorage feedStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.feedStorage = feedStorage;
     }
 
     @Override
@@ -61,6 +67,7 @@ public class UserDbStorage implements UserStorage {
         User user = getToId(id);
         String sql = "insert into FRIENDS(FRIEND_ID, USER_ID, STATUS) values ( ?,?,'true')";
         jdbcTemplate.update(sql, friendId, id);
+        feedStorage.addEventFeed(id, friendId, EventType.FRIEND, Operation.ADD);
         return user;
     }
 
@@ -68,6 +75,7 @@ public class UserDbStorage implements UserStorage {
     public User deleteFromFriend(int id, int friendId) {
         String sql = "delete  from FRIENDS where USER_ID = ? and FRIEND_ID = ?";
         jdbcTemplate.update(sql, id, friendId);
+        feedStorage.addEventFeed(id, friendId, EventType.FRIEND, Operation.REMOVE);
         return getToId(id);
     }
 
