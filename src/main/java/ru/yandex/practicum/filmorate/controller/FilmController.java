@@ -1,26 +1,17 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.SortBy;
 import ru.yandex.practicum.filmorate.service.FilmService;
-
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.*;
 
+@RequiredArgsConstructor
 @RestController
 public class FilmController {
     private final FilmService filmService;
-
-    @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
 
     @GetMapping("/films/search")
     public List<Film> getFilmsBySearch(@RequestParam String query, @RequestParam List<String> by){

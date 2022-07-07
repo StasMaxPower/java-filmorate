@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,15 +12,11 @@ import ru.yandex.practicum.filmorate.storage.directorStorage.DirectorStorage;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class DirectorService {
     private final DirectorStorage directorStorage;
-
-    @Autowired
-    public DirectorService(@Qualifier("directorDbStorage") DirectorStorage directorStorage) {
-        this.directorStorage = directorStorage;
-    }
 
     public List<Director> getDirectors() {
         log.info("Запрос на вывод всех режиссëров получен.");

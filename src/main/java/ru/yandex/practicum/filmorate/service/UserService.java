@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.feedStorage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.filmStorage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.likesStorage.LikesDbStorage;
 import ru.yandex.practicum.filmorate.storage.likesStorage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ public class UserService {
 
     @Autowired
     public UserService(@Qualifier("userDbStorage") UserStorage userStorage,
-                       LikesStorage likesStorage,
+                       LikesDbStorage likesStorage,
                        @Qualifier("filmDbStorage") FilmStorage filmStorage,
                        FeedStorage feedStorage) {
         this.userStorage = userStorage;

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.feedStorage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -12,15 +13,11 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class FeedDbStorage implements FeedStorage {
-
     private final JdbcTemplate jdbcTemplate;
-
-    public FeedDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public void addEventFeed(int userId, int entityId, EventType eventType, Operation operation) {

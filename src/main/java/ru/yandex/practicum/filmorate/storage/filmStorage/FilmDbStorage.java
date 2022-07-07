@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.filmStorage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -12,26 +13,20 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.directorStorage.DirectorStorage;
+import ru.yandex.practicum.filmorate.storage.genrestorage.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.genrestorage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpaStorage.MpaStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class FilmDbStorage implements FilmStorage {
-    private final JdbcTemplate jdbcTemplate;//
+    private final JdbcTemplate jdbcTemplate;
     private final GenreStorage genreStorage;
     private final MpaStorage mpaStorage;
     private final DirectorStorage directorStorage;
-
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreStorage genreStorage, MpaStorage mpaStorage, DirectorStorage directorStorage) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.genreStorage = genreStorage;
-        this.mpaStorage = mpaStorage;
-        this.directorStorage = directorStorage;
-    }
 
     @Override
     public List<Film> getBySearch(String query, List<String> by){

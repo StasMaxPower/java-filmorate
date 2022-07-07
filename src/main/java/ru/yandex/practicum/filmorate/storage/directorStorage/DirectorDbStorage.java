@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.directorStorage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,15 +15,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+@RequiredArgsConstructor
 @Slf4j
 @Component("directorDbStorage")
 public class DirectorDbStorage implements DirectorStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public DirectorDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public List<Director> findAll() {

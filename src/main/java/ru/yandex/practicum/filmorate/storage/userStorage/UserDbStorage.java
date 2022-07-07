@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.userStorage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -19,18 +20,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private final FeedStorage feedStorage;
-
-
-    public UserDbStorage(JdbcTemplate jdbcTemplate, FeedStorage feedStorage) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.feedStorage = feedStorage;
-    }
 
     @Override
     public List<User> getSameFriendsWithAnotherUser(int id, int otherId){
