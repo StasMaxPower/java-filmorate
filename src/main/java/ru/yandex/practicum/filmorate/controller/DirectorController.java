@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
@@ -7,13 +8,10 @@ import ru.yandex.practicum.filmorate.service.DirectorService;
 import javax.validation.Valid;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 public class DirectorController {
     private final DirectorService directorService;
-
-    public DirectorController(DirectorService directorService) {
-        this.directorService = directorService;
-    }
 
     //GET /directors — Список всех режиссёров
     @GetMapping("/directors")
