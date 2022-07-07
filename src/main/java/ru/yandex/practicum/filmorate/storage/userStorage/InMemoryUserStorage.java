@@ -66,6 +66,11 @@ public class InMemoryUserStorage implements UserStorage{
                 .orElseGet(()->checkId(id));
     }
 
+    @Override
+    public void deleteUser(int id) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
     public User checkId(int id){
         if (!users.containsKey(id)){
             log.info("Нет такого пользователя");

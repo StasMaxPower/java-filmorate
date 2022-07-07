@@ -5,7 +5,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.Collection;
 import java.util.List;
 
-public interface UserStorage {
+public interface    UserStorage {
 
     public List<User> getSameFriendsWithAnotherUser(int id, int otherId);
     public User addToFriend(int id, int friendId);
@@ -19,4 +19,7 @@ public interface UserStorage {
     public User update(User user);
 
     public User getToId(int id);
+
+    void deleteUser(int id);
+
 }
