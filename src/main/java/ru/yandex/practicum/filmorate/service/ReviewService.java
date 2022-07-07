@@ -21,7 +21,7 @@ public class ReviewService {
 
 
     @Autowired
-    public ReviewService(@Qualifier("reviewDbStorage") ReviewStorage reviewStorage, @Qualifier("filmDbStorage") FilmStorage filmStorage, UserDbStorage userDbStorage) {
+    public ReviewService(ReviewStorage reviewStorage, @Qualifier("filmDbStorage") FilmStorage filmStorage, UserDbStorage userDbStorage) {
         this.reviewStorage = reviewStorage;
         this.filmStorage = filmStorage;
         this.userDbStorage = userDbStorage;
